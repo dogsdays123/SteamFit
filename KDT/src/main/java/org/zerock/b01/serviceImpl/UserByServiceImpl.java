@@ -4,22 +4,17 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.zerock.b01.domain.MemberRole;
-import org.zerock.b01.domain.Supplier;
 import org.zerock.b01.domain.UserBy;
-import org.zerock.b01.dto.SupplierDTO;
 import org.zerock.b01.dto.UserByDTO;
-import org.zerock.b01.repository.SupplierRepository;
 import org.zerock.b01.repository.UserByRepository;
 import org.zerock.b01.service.UserByService;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 

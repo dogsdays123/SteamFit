@@ -7,25 +7,16 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.extern.log4j.Log4j2;
-import org.hibernate.result.Output;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.zerock.b01.domain.*;
-import org.zerock.b01.dto.*;
 import org.zerock.b01.dto.allDTO.*;
-import org.zerock.b01.repository.SupplierStockRepository;
 import org.zerock.b01.service.AllSearch;
-import org.zerock.b01.service.OutputService;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Log4j2
