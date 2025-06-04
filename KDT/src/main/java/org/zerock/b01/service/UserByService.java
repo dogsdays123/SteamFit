@@ -7,22 +7,16 @@ import java.util.List;
 
 public interface UserByService {
     UserByDTO readOne(String uId);
-    void agreeEmployee(String uId, String userRank, String userJob, String status);
-    void disAgreeEmployee(String uId, String userRank);
     UserByDTO readOneForEmail(String uEmail);
-    void registerAdmin(UserBy user, SupplierDTO supplierDTO);
     String registerUser(UserByDTO userByDTO);
     boolean checkEmailExists(String email);
     String changeUserProfile(String email);
-    void changeUser(UserByDTO userByDTO);
-    void agreeSupplier(String uId, String sStatus);
-    void disAgreeSupplier(String uId);
-
     List<UserBy> readAllUser();
+    void registerAdmin(UserBy userBy);
+    void registerUnit(UserByDTO userByDTO);
 
     static class MidExistException extends Exception {
     }
 
-    void join(UserByDTO userByDTO, SupplierDTO supplierDTO) throws MidExistException;
     void removeUser(UserByDTO userByDTO);
 }

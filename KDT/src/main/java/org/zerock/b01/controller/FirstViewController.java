@@ -32,7 +32,6 @@ public class FirstViewController {
 
     private final UserByService userByService;
     private final PasswordEncoder passwordEncoder;
-    private final ModelMapper modelMapper;
     private final UserByRepository userByRepository;
 
     @ModelAttribute
@@ -60,30 +59,10 @@ public class FirstViewController {
 
     @PostMapping("/join")
     public String join(@ModelAttribute("userByDTO") UserByDTO userByDTO,
-                       @ModelAttribute("supplierDTO") SupplierDTO supplierDTO,
                        Model model, RedirectAttributes redirectAttributes) {
 
-        log.info("join");
-        log.info("%%%%" + userByDTO);
-
-        //html에서 수정하기 귀찮음
-        if (userByDTO.getUserJob().contains("협력회사") && userByDTO.getUserType().equals("our")) {
-            String userJob = userByDTO.getUserJob().replace(",협력회사", "");
-            userByDTO.setUserJob(userJob);
-        }
-
-        if (userByDTO.getUserJob().contains("협력회사") && userByDTO.getUserType().equals("other")) {
-            String userJob = "협력회사";
-            userByDTO.setUserJob(userJob);
-        }
-
-        try {
-            redirectAttributes.addFlashAttribute("message", "회원가입이 완료되었습니다.");
-            userByService.join(userByDTO, supplierDTO);
-        } catch (UserByService.MidExistException e) {
-            redirectAttributes.addFlashAttribute("error", "uId");
-            return "redirect:join";
-        }
+        redirectAttributes.addFlashAttribute("message", "회원가입이 완료되었습니다.");
+        userByService.registerUnit(userByDTO);
         redirectAttributes.addFlashAttribute("result", "success");
         model.addAttribute("userDTO", userByDTO);
 
@@ -189,7 +168,6 @@ public class FirstViewController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 생성된 데이터입니다.");
         }
         testRegister();
-        testRegisterUnit();
         return "firstView/login";
     }
 
@@ -197,70 +175,9 @@ public class FirstViewController {
         UserBy user = UserBy.builder()
                 .uId("Admin")
                 .uPassword(passwordEncoder.encode("1234"))
-                .uName("관리자")
-                .uEmail("Admin@admin.admin")
                 .roleSet(Set.of(MemberRole.ADMIN))
-                .userJob("관리자")
-                .status("관리자")
-                .uPhone("01000000000")
                 .build();
 
-        SupplierDTO supplierDTO = SupplierDTO.builder()
-                .sName("admin")
-                .sRegNum("12345678")
-                .sManager("admin")
-                .sStatus("관리자")
-                .build();
-
-        userByService.registerAdmin(user, supplierDTO);
-    }
-
-    public void testRegisterUnit() throws UserByService.MidExistException {
-        String tester[] = {"", "", ""};
-        int regNum = 100;
-        for (int i = 0; i < regNum; i++) {
-            if (i < regNum / 2) {
-                tester[0] = "생산부서";
-                tester[1] = "our";
-                UserBy user = UserBy.builder()
-                        .uId("testUnit" + i)
-                        .uPassword(passwordEncoder.encode("1234"))
-                        .uName("테스터" + i)
-                        .userType(tester[1])
-                        .userJob(tester[0])
-                        .uEmail("Admin" + i + "@admin.admin")
-                        .roleSet(Set.of(MemberRole.USER))
-                        .uPhone("01000000000")
-                        .build();
-
-                UserByDTO userDTO = modelMapper.map(user, UserByDTO.class);
-                userByService.join(userDTO, null);
-            } else {
-                tester[0] = "협력회사";
-                tester[1] = "other";
-                tester[2] = "오리배";
-                UserBy user = UserBy.builder()
-                        .uId("testUnit" + i)
-                        .uPassword(passwordEncoder.encode("1234"))
-                        .uName("테스터" + i)
-                        .userType(tester[1])
-                        .userJob(tester[0])
-                        .uEmail("Admin" + i + "@admin.admin")
-                        .roleSet(Set.of(MemberRole.USER))
-                        .uPhone("01000000000")
-                        .build();
-
-                UserByDTO userDTO = modelMapper.map(user, UserByDTO.class);
-
-                SupplierDTO supplierDTO = SupplierDTO.builder()
-                        .sName(tester[2] + i)
-                        .sRegNum("12345678" + i)
-                        .sManager(tester[2] + i)
-                        .sStatus("대기중")
-                        .build();
-
-                userByService.join(userDTO, supplierDTO);
-            }
-        }
+        userByService.registerAdmin(user);
     }
 }

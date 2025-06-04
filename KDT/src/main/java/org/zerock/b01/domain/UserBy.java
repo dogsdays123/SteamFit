@@ -38,8 +38,8 @@ public class UserBy extends BaseEntity {
 
     private String status;
 
-    @OneToMany(mappedBy = "userBy", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Set<Supplier> suppliers = new HashSet<>();
+//    @OneToMany(mappedBy = "userBy", cascade = CascadeType.REMOVE, orphanRemoval = true)
+//    private Set<Supplier> suppliers = new HashSet<>();
 
     @ElementCollection(fetch = FetchType.LAZY)
     @Builder.Default
@@ -59,11 +59,6 @@ public class UserBy extends BaseEntity {
         this.uAddress = uAddress;
         this.uEmail = uEmail;
         this.uPhone = uPhone;
-    }
-    public void changeETC(String userRank, String status, String userJob) {
-        this.userRank = userRank;
-        this.status = status;
-        this.userJob = userJob;
     }
 
     public void changeStatus(String status) {

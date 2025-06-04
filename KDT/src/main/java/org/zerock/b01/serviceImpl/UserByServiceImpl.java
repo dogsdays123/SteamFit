@@ -27,59 +27,7 @@ public class UserByServiceImpl implements UserByService {
     private final ModelMapper modelMapper;
     private final UserByRepository userByRepository;
     private final PasswordEncoder passwordEncoder;
-    private final SupplierRepository supplierRepository;
     private final JavaMailSender mailSender;
-
-    @Override
-    public void registerAdmin(UserBy user, SupplierDTO sup){
-        userByRepository.save(user);
-        Supplier supplier = modelMapper.map(sup, Supplier.class);
-        supplier.setUserBy(user);
-        supplierRepository.save(supplier);
-    }
-
-    @Override
-    public void agreeEmployee(String uId, String userRank, String userJob, String status){
-        UserBy user = userByRepository.findById(uId).orElseThrow();
-
-        log.info("%%% " + status);
-
-        if(status.isEmpty() || status.equals("대기중")){
-            status = "승인";
-        }
-
-        user.changeETC(userRank, status, userJob);
-    }
-
-    @Override
-    public void disAgreeEmployee(String uId, String userRank){
-        UserBy user = userByRepository.findById(uId).orElseThrow();
-        String status = "반려";
-        user.changeETC(userRank, status, user.getUserJob());
-    }
-
-    @Override
-    public void agreeSupplier(String uId, String sStatus){
-        Supplier sup = supplierRepository.findSupplierByUser(userByRepository.findById(uId).orElseThrow());
-        UserBy user = userByRepository.findById(uId).orElseThrow();
-
-        if(sStatus.equals("대기중") || sStatus.equals("승인")){
-            user.changeStatus("승인");
-            sStatus = "승인";
-        } else if(sStatus.equals("반려")) {
-            user.changeStatus("반려");
-            sStatus = "반려";
-        }
-
-        sup.changeStatus(sStatus);
-    }
-
-    @Override
-    public void disAgreeSupplier(String uId){
-        Supplier sup = supplierRepository.findSupplierByUser(userByRepository.findById(uId).orElseThrow());
-        String status = "반려";
-        sup.changeStatus(status);
-    }
 
     @Override
     public String registerUser(UserByDTO userByDTO){
@@ -92,32 +40,14 @@ public class UserByServiceImpl implements UserByService {
     }
 
     @Override
-    public void join(UserByDTO userByDTO, SupplierDTO supplierDTO) throws MidExistException{
-        String uId = userByDTO.getUId();
-        log.info("look at me @@@@@@@@@@   " + uId);
-        boolean exist = userByRepository.existsById(uId);
-
-        if(exist){
-            throw new MidExistException();
-        }
-
-        userByDTO.setStatus("대기중");
+    public void registerUnit(UserByDTO userByDTO){
         UserBy userBy = modelMapper.map(userByDTO, UserBy.class);
-        userBy.changeUPassword(passwordEncoder.encode(userByDTO.getUPassword()));
-        userBy.addRole(MemberRole.USER);
-
-        log.info("=======================");
-        log.info(userBy);
-        log.info(userBy.getRoleSet());
-
         userByRepository.save(userBy);
+    }
 
-        if(userBy.getUserType().equals("other") && userByRepository.findById(userBy.getUId()).isPresent()){
-            Supplier supplier = modelMapper.map(supplierDTO, Supplier.class);
-            supplier.setUserBy(userBy);
-            supplier.setSStatus("대기중");
-            supplierRepository.save(supplier);
-        }
+    @Override
+    public void registerAdmin(UserBy userBy){
+        userByRepository.save(userBy);
     }
 
     @Override
@@ -154,14 +84,6 @@ public class UserByServiceImpl implements UserByService {
     public List<UserBy> readAllUser(){
         List<UserBy> userByDTOList = userByRepository.findAll();
         return userByDTOList;
-    }
-
-    @Override
-    public void changeUser(UserByDTO userByDTO){
-        Optional<UserBy> user = userByRepository.findById(userByDTO.getUId());
-        UserBy realUser = user.orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없음"));
-        realUser.changeUPassword(passwordEncoder.encode(userByDTO.getUPassword()));
-        realUser.changeAll(userByDTO.getUAddress(), userByDTO.getUEmail(), userByDTO.getUPhone());
     }
 
     @Override
