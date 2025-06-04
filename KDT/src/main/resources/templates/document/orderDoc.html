@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/basic.html}"
+      th:with="breadcrumbLevel1='문서 관리', breadcrumbCurrent='발주서 관리'">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="/css/supply/list.css" rel="stylesheet">
+</head>
+<body>
+<div layout:fragment="orderDoc">
+    <div class="container-fluid">
+        <div class="container" style="max-width: 1000px; margin-left: 0;">
+            <div class="d-flex align-items-center mb-3">
+                <h4 class="mb-0 me-2">발주서 목록</h4>
+                <div class="tooltip-wrap">
+                    <i class="bi bi-question-circle-fill fs-6 text-secondary" role="button"></i>
+                    <span class="tooltip-text">등록된 발주서 목록을 조회하고 관리할 수 있습니다.</span>
+                </div>
+            </div>
+            <form th:action="@{/document/orderDoc}" method="get">
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-2">
+                        <label class="form-label small">발주 코드</label>
+                        <select class="form-select form-select-sm searchSelect" id="obCode" name="obCode">
+                            <option value="" selected>전체</option>
+                            <th:block th:each="ob : ${orderByList}">
+                                <option th:value="${ob.getOCode()}" th:text="${ob.getOCode()}"></option>
+                            </th:block>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="mName" class="form-label small">자재명</label>
+                        <select class="form-select form-select-sm searchSelect" id="mName" name="mName">
+                            <option value="" selected>전체</option>
+                            <th:block th:each="m : ${materialList}">
+                                <option th:value="${m.getMName()}" th:text="${m.getMName()}"></option>
+                            </th:block>
+                        </select>
+                    </div>
+                    <div class="col-md-1">
+                        <label for="oState" class="form-label small">상태</label>
+                        <select class="form-select form-select-sm" id="oState" name="oState" title="상태">
+                            <option value="" selected>선택</option>
+                            <th:block th:each="state : ${stateList}">
+                                <option class="CheckState" th:value="${state}" th:data-state="${state}" th:text="${state}"></option>
+                            </th:block>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end gap-2">
+                        <button type="submit" class="btn btn-dark btn-sm w-100">적용</button>
+                        <button type="button" class="clearBtn btn btn-outline-dark btn-sm w-100" title="필터 초기화">초기화</button>
+                    </div>
+                </div>
+            </form>
+            <form>
+                <div class="row g-2 mt-2">
+                    <div class="col-md-6">
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-white"><i class="fas fa-search text-secondary"></i></span>
+                            <input type="text" class="form-control" name="keyword" id="keyword" placeholder="검색할 항목을 입력하세요 (예: 자재명)">
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+        <div class="container" style="max-width: 1600px; margin-left: 0;">
+            <div class="d-flex justify-content-end mb-2">
+                <form>
+                    <div class="col-auto">
+                        <select class="form-select form-select-sm" title="정렬 갯수 필터" name="size"
+                                onchange="this.form.submit()">
+                            <option value="10" th:selected="${pageRequestDTO.size == 10}">10개씩</option>
+                            <option value="20" th:selected="${pageRequestDTO.size == 20}">20개씩</option>
+                            <option value="30" th:selected="${pageRequestDTO.size == 30}">30개씩</option>
+                            <option value="50" th:selected="${pageRequestDTO.size == 50}">50개씩</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="bg-white rounded">
+                <div style="max-height: 480px; overflow-y: auto;">
+                    <table class="table table-sm table-bordered table-hover align-middle fs-6">
+                        <thead class="table-light small text-center">
+                        <tr>
+                            <th><input type="checkbox" id="selectAll"></th>
+                            <th>발주 코드</th>
+                            <th>발주일</th>
+                            <th>자재명</th>
+                            <th>리드 타임</th>
+                            <th>발주 수량</th>
+                            <th>공급 업체</th>
+                            <th>총 금액</th>
+                            <th>납기일</th>
+                            <th>발주자</th>
+                            <th>상태</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${filteredList == null or #lists.isEmpty(filteredList)}">
+                            <td colspan="15" class="text-center" style="padding: 20px 0;">
+                                등록된 구매 발주서가 없습니다. 필터 조건을 다시 확인하거나 검색어를 변경하여 재검색해 주세요.
+                            </td>
+                        </tr>
+                        <tr th:each="dto : ${filteredList}">
+                            <td><input type="checkbox" class="selectPlan" title="해당 행 선택"></td>
+                            <td th:text="${dto.getOCode()}"></td>
+                            <td th:text="${#temporals.format(dto.getORegDate(), 'yyyy-MM-dd')}"></td>
+                            <td th:text="${dto.getMName()}"></td>
+                            <td th:text="${dto.getLeadTime()}"></td>
+                            <td th:text="${dto.getONum()}"></td>
+                            <td th:text="${dto.getSName()}"></td>
+                            <td th:text="${dto.getOTotalPrice()}"></td>
+                            <td th:text="${dto.getOExpectDate()}"></td>
+                            <td th:text="${dto.getUId()}"></td>
+                            <td class="CheckState"
+                                th:data-state="${dto.getOState() != null ? dto.getOState() : 'UNKNOWN'}">
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div>
+                <div class="text-start">
+                    <div class="d-flex gap-2">
+                        <button type="button" id="orderDocPDF" class="btn btn-success btn-sm">선택된 항목 PDF 발행</button>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <ul class="pagination flex-wrap">
+                            <li class="page-item" th:if="${responseDTO.prev}">
+                                <a class="page-link" th:data-num="${responseDTO.start -1}"><</a>
+                            </li>
+
+                            <th:block th:each="i: ${#numbers.sequence(responseDTO.start,responseDTO.end)}">
+                                <li th:class="${responseDTO.page == i}?'page-item active':'page-item'">
+                                    <a class="page-link" th:data-num="${i}">[[${i}]]</a>
+                                </li>
+                            </th:block>
+
+                            <li class="page-item" th:if="${responseDTO.next}">
+                                <a class="page-link" th:data-num="${responseDTO.end +1}">></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="pdfModal" tabindex="-1" aria-labelledby="pdfModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pdfModalLabel">PDF 발행</h5>&nbsp;&nbsp;
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="pdfModalForm">
+                        <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                            <table class="table table-sm table-bordered table-hover align-middle fs-6">
+                                <thead class="table-light small text-center">
+                                <tr>
+                                    <th>발주 코드</th>
+                                    <th>발주일</th>
+                                    <th>자재명</th>
+                                    <th>리드 타임</th>
+                                    <th>발주 수량</th>
+                                    <th>공급 업체</th>
+                                    <th>총 금액</th>
+                                    <th>납기일</th>
+                                    <th>발주자</th>
+                                    <th>PDF</th>
+                                </tr>
+                                </thead>
+                                <tbody id="pdfBody">
+                                <!-- JS로 선택된 사원 목록 추가 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-success btn-sm" onclick="generateOrderPDF()">발행</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/document/orderDoc.js}"></script>
+</div>
+</body>
+<script layout:fragment="script" th:inline="javascript">
+    document.querySelector(".pagination").addEventListener("click", function (e) {
+        e.preventDefault()
+        e.stopPropagation()
+
+        const target = e.target
+
+        if (target.tagName !== 'A') {
+            return
+        }
+
+        const num = target.getAttribute("data-num")
+
+        const formObj = document.querySelector("form")
+
+        formObj.innerHTML += `<input type='hidden' name='page' value='${num}'>`
+
+        formObj.submit()
+    }, false)
+
+    document.querySelector(".clearBtn").addEventListener("click", function (e) {
+        e.preventDefault()
+        e.stopPropagation()
+
+        self.location = '/orderBy/orderByRegister'
+    }, false)
+</script>

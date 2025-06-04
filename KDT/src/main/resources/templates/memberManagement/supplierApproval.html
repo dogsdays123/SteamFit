@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/basic.html}"
+      th:with="breadcrumbLevel1='계정 관리', breadcrumbCurrent='업체 가입 승인'">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="/css/supply/list.css" rel="stylesheet">
+</head>
+<body>
+<div layout:fragment="mmEmpAppr">
+    <div class="container-fluid">
+        <div class="container" style="max-width: 1000px; margin-left: 0;">
+            <div class="d-flex align-items-center mb-3">
+                <h4 class="mb-0 me-2">업체 가입 승인</h4>
+                <div class="tooltip-wrap">
+                    <i class="bi bi-question-circle-fill fs-6 text-secondary" role="button"></i>
+                    <span class="tooltip-text">새로 가입된 업체의 정보, 승인/반려 절차를 관리합니다.</span>
+                </div>
+            </div>
+
+            <form id="searchForm">
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-2">
+                        <label for="sBusinessType" class="form-label small">업태 선택</label>
+                        <select class="form-select form-select-sm" id="sBusinessType" name="sBusinessType">
+                            <option selected>선택</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="regDateSelect" class="form-label small">신청일</label>
+                        <input type="date" th:value="${pageRequestDTO.sRegDate}" class="form-control form-control-sm" id="regDateSelect" name="sRegDate">
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end gap-2">
+                        <button type="submit" class="btn btn-dark btn-sm w-100">적용</button>
+                        <button type="button" class="clearBtn btn btn-outline-dark btn-sm w-100" title="필터 초기화">초기화</button>
+                    </div>
+                </div>
+                <div class="row g-2 mt-2">
+                    <div class="col-md-6">
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-white"><i class="fas fa-search text-secondary"></i></span>
+                            <input type="text" class="form-control" id="keyword" name="keyword" title="검색어 입력" placeholder="검색어 입력">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="container" style="max-width: 1600px; margin-left: 0;">
+            <div class="d-flex justify-content-end mb-2">
+                <form id="pageSizeForm">
+                    <div class="col-auto">
+                        <select class="form-select form-select-sm" title="정렬 갯수 필터" name="size" onchange="this.form.submit()">
+                            <option value="10" th:selected="${pageRequestDTO.size == 10}">10개씩</option>
+                            <option value="20" th:selected="${pageRequestDTO.size == 20}">20개씩</option>
+                            <option value="30" th:selected="${pageRequestDTO.size == 30}">30개씩</option>
+                            <option value="50" th:selected="${pageRequestDTO.size == 50}">50개씩</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="bg-white rounded">
+                <div style="max-height: 550px; overflow-y: auto;">
+                    <table class="table table-sm table-bordered table-hover align-middle fs-6">
+                        <thead class="table-light small text-center" style="height: 30px">
+                        <tr>
+                            <th><input type="checkbox" id="selectAll" title="전체선택"></th>
+                            <th>관리자</th>
+                            <th>상호</th>
+                            <th>사업자등록번호</th>
+                            <th>업태</th>
+                            <th>매니저</th>
+                            <th>전화번호</th>
+                            <th>신청일</th>
+                            <th>상태</th>
+                        </tr>
+                        </thead>
+                        <tbody id="userWaitTable" th:with="link = ${pageRequestDTO.getLink()}" style="height: 40px">
+                        <tr th:if="${#lists.isEmpty(responseDTO.dtoList)}">
+                            <td colspan="10" class="text-center" style="padding: 20px 0;">승인 대기중인 업체가 없습니다. 필터 조건을 다시 확인하거나 검색어를 변경하여 재검색해 주세요.</td>
+                        </tr>
+                        <tr th:each="dto:${responseDTO.dtoList}" class="hover-row" style="height: 40px; position: relative;">
+                            <td><input type="checkbox" class="selectApproval" title="해당 행 선택"></td>
+                            <td th:text="${dto.getUId()}"></td>
+                            <td th:text="${dto.getSName()}"></td>
+                            <td th:text="${dto.getSRegNum()}"></td>
+                            <td th:text="${dto.getSBusinessType()}"></td>
+                            <td th:text="${dto.getSManager()}"></td>
+                            <td th:text="${dto.getSPhone()}"></td>
+                            <td th:text="${#temporals.format(dto.getRegDate(), 'yyyy-MM-dd')}"></td>
+                            <td th:text="${dto.getSStatus()}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="text-start">
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-primary btn-sm" id="openAgreeModal">
+                                선택 업체 가입 승인
+                            </button>
+                            <button type="button" class="btn btn-danger btn-sm" id="openDisAgreeModal">
+                                선택 업체 가입 반려
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <ul class="pagination flex-wrap">
+                        <li class="page-item" th:if="${responseDTO.prev}">
+                            <a class="page-link" th:data-num="${responseDTO.start -1}">Previous</a>
+                        </li>
+
+                        <th:block th:each="i: ${#numbers.sequence(responseDTO.start,responseDTO.end)}">
+                            <li th:class="${responseDTO.page == i}?'page-item active':'page-item'">
+                                <a class="page-link" th:data-num="${i}">[[${i}]]</a>
+                            </li>
+                        </th:block>
+
+                        <li class="page-item" th:if="${responseDTO.next}">
+                            <a class="page-link" th:data-num="${responseDTO.end +1}">Next</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--    모달-->
+    <div class="modal fade" id="AgreeModal" tabindex="-1" aria-labelledby="AgreeModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <form method="post" th:action="@{/memberManagement/supplierApprovalAgree}">
+                <input type="hidden" name="pageType" value="a">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="batchApproveLabel">사원 가입 승인</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                            <table class="table table-sm table-bordered table-hover align-middle fs-6">
+                                <thead class="table-light small text-center">
+                                <tr>
+                                    <th>관리자</th>
+                                    <th>상호</th>
+                                    <th>사업자등록번호</th>
+                                    <th>업태</th>
+                                    <th>매니저</th>
+                                    <th>전화번호</th>
+                                    <th>신청일</th>
+                                    <th>상태</th>
+                                </tr>
+                                </thead>
+                                <tbody class="selectedSupListAgr">
+                                <!-- JS로 선택된 사원 목록 추가 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">닫기</button>
+                        <button type="submit" class="btn btn-primary btn-sm" onclick="return confirmSubmit('승인')">승인</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!--    모달-->
+
+    <!--가입 반려 모달-->
+    <div class="modal fade" id="DisAgreeModal" tabindex="-1" aria-labelledby="DisAgreeModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <form method="post" th:action="@{/memberManagement/supplierApprovalDisAgree}">
+                <input type="hidden" name="pageType" value="a">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="batchRejectLabel">사원 가입 반려</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                            <table class="table table-sm table-bordered table-hover align-middle fs-6">
+                                <thead class="table-light small text-center">
+                                <tr>
+                                    <th>관리자</th>
+                                    <th>상호</th>
+                                    <th>사업자등록번호</th>
+                                    <th>업태</th>
+                                    <th>매니저</th>
+                                    <th>전화번호</th>
+                                    <th>신청일</th>
+                                    <th>상태</th>
+                                </tr>
+                                </thead>
+                                <tbody class="selectedEmpListDis">
+                                <!-- JS로 선택된 사원 목록 추가 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">닫기</button>
+                        <button type="submit" class="btn btn-danger btn-sm" id="btnBatchReject" onclick="return confirmSubmit('반려')">반려</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <script th:if="${message != null}" th:inline="javascript">
+            /*<![CDATA[*/
+            alert([[${message}]]);
+            /*]]>*/
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script th:src="@{/js/memberManagement/supplierApproval.js}"></script>
+    </div>
+    <!--    모달-->
+</div>
+</body>
+<script layout:fragment="script" th:inline="javascript">
+    document.querySelector(".pagination").addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const target = e.target;
+        if (target.tagName !== 'A') {
+            return;
+        }
+
+        const num = target.getAttribute("data-num");
+
+        // 검색 조건을 URL에서 가져오기
+        const searchParams = new URLSearchParams(window.location.search);
+
+        // 페이지 번호를 변경
+        searchParams.set('page', num);
+
+        // 페이지 전환을 위한 새로운 URL 생성
+        const newUrl = window.location.pathname + '?' + searchParams.toString();
+
+        // 페이지 리디렉션
+        window.location.href = newUrl;
+    }, false);
+
+    document.querySelector(".clearBtn").addEventListener("click", function (e) {
+        e.preventDefault()
+        e.stopPropagation()
+
+        self.location = '/memberManagement/supplierApproval'
+    }, false)
+</script>

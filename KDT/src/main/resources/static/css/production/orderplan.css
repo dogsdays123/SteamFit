@@ -1,0 +1,13 @@
+.container-fluid{
+    padding: 20px;
+}
+
+th, td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+td{
+    padding: 0.4rem 0.5rem;
+    font-size: 0.85rem;
+}

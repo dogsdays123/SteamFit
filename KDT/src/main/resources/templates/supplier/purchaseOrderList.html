@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/basic.html}"
+      th:with="breadcrumbLevel1='거래 관리', breadcrumbCurrent='발주 목록'">
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="/css/supply/list.css" rel="stylesheet">
+</head>
+<body>
+<div layout:fragment="slPList">
+  <div class="container-fluid">
+    <div class="container" style="max-width: 1200px; margin-left: 0;">
+      <div class="d-flex align-items-center mb-3">
+        <h4 class="mb-0 me-2">발주 목록</h4>
+        <div class="tooltip-wrap">
+          <i class="bi bi-question-circle-fill fs-6 text-secondary" role="button"></i>
+          <span class="tooltip-text">거래처가 발급한 발주 목록으로, 납품 준비 상태 확인 및 거래명세서 발급이 가능합니다.</span>
+        </div>
+      </div>
+
+      <!-- 검색 필터 -->
+      <form>
+        <div class="row g-2 align-items-end">
+          <div class="col-md-3" style="width: 255px">
+            <label class="form-label small">자재명</label>
+            <select class="form-select form-select-sm searchSelect" name="mName" title="자재명">
+              <option value="" th:selected="${selectedMName == ''}">전체</option>
+              <th:block th:each="p : ${mNameList}">
+                <option th:value="${p}" th:text="${p}" th:selected="${p == selectedMName}"></option>
+              </th:block>
+            </select>
+          </div>
+          <div class="col-md-1" style="width: 140px;">
+            <label for="status" class="form-label small">상태</label>
+            <select class="drState form-select form-select-sm" id="status" name="oState" title="상태">
+              <option value="" th:selected="${selectedDrState == ''}">전체</option>
+              <option th:each="state : ${drStateList}"
+                      th:value="${state.name()}"
+                      th:selected="${state.name() == selectedDrState}"
+                      th:class="'state-' + ${state.name()}"
+                      th:attr="data-state=${state.name()}">
+              </option>
+            </select>
+          </div>
+          <div class="col-md-2 d-flex align-items-end gap-2">
+            <button type="submit" id="filterBtn" class="btn btn-dark btn-sm w-100">적용</button>
+            <button type="button" id="filterResetBtn" class="clearBtn btn btn-outline-dark btn-sm w-100" title="필터 초기화">초기화</button>
+          </div>
+        </div>
+      </form>
+      <!-- 2줄: 검색어 입력 -->
+      <form>
+        <div class="row g-2 mt-2">
+          <div class="col-md-6">
+            <div class="input-group input-group-sm">
+              <span class="input-group-text bg-white"><i class="fas fa-search text-secondary"></i></span>
+              <input type="text" class="form-control" name="keyword" id="keyword" th:value="${pageRequestDTO.keyword}" placeholder="검색할 항목을 입력하세요 (예: 자재명)">
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="container" style="max-width: 1600px; margin-left: 0;">
+      <div class="d-flex justify-content-end mb-2">
+        <form>
+          <div class="col-auto">
+            <select class="form-select form-select-sm" title="정렬 갯수 필터" name="size" onchange="this.form.submit()">
+              <option value="10" th:selected="${pageRequestDTO.size == 10}">10개씩</option>
+              <option value="20" th:selected="${pageRequestDTO.size == 20}">20개씩</option>
+              <option value="30" th:selected="${pageRequestDTO.size == 30}">30개씩</option>
+              <option value="50" th:selected="${pageRequestDTO.size == 50}">50개씩</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="bg-white rounded">
+        <div style="max-height: 450px; overflow-y: auto;">
+          <table class="table table-sm table-bordered table-hover align-middle fs-6">
+            <thead class="table-light small text-center">
+            <tr>
+              <th><input type="checkbox" id="selectAll"></th>
+              <th>발주 코드</th>
+              <th>자재 코드</th>
+              <th style="width: 400px;">자재명</th>
+              <th>주문 수량</th>
+              <th>단위 금액</th>
+              <th>총 금액</th>
+              <th>희망 납기일</th>
+              <th>상태</th>
+            </tr>
+            </thead>
+            <tbody id="plansTable" th:with="link = ${pageRequestDTO.getLink()}">
+            <tr th:if="${#lists.isEmpty(responseDTO.dtoList)}">
+              <td colspan="15" class="text-center" style="padding: 20px 0;">
+                등록된 구매 발주서가 없습니다. 필터 조건을 다시 확인하거나 검색어를 변경하여 재검색해 주세요.
+              </td>
+            </tr>
+            <tr th:each="dto:${responseDTO.dtoList}" style="height: 40px;">
+              <td><input type="checkbox" class="selectPlan"></td>
+              <td th:text="${dto.getOCode()}"></td>
+              <td th:text="${dto.getMCode()}"></td>
+              <td th:text="${dto.getMName()}"></td>
+              <td th:text="${dto.getONum()}"></td>
+              <td th:text="${dto.getMUnitPrice()}"></td>
+              <td th:text="${dto.getOTotalPrice()}"></td>
+              <td th:text="${dto.getOExpectDate()}"></td>
+              <td class="CheckState"
+                  th:data-state="${dto.getOState() != null ? dto.getOState() : 'UNKNOWN'}"></td>
+              <td hidden="hidden" th:text="${dto.getMWidth()}"></td>
+              <td hidden="hidden" th:text="${dto.getMDepth()}"></td>
+              <td hidden="hidden" th:text="${dto.getMHeight()}"></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <br>
+        <div class="text-start">
+          <div class="text-start">
+            <div class="d-flex gap-2">
+              <button type="button" class="btn btn-success btn-sm" id="openPurchaseReadyModal">
+                선택 항목 납품 준비 완료
+              </button>
+<!--              <button type="button" class="btn btn-primary btn-sm" id="openPurchaseModal">-->
+<!--                선택 항목 거래명세서 발급-->
+<!--              </button>-->
+<!--              <button type="button" class="btn btn-danger btn-sm" id="openPurchaseDelModal">-->
+<!--                선택 항목 삭제-->
+<!--              </button>-->
+            </div>
+          </div>
+        </div>
+        <div class="d-flex justify-content-center">
+          <ul class="pagination flex-wrap">
+            <li class="page-item" th:if="${responseDTO.prev}">
+              <a class="page-link" th:data-num="${responseDTO.start -1}">Previous</a>
+            </li>
+
+            <th:block th:each="i: ${#numbers.sequence(responseDTO.start,responseDTO.end)}">
+              <li th:class="${responseDTO.page == i}?'page-item active':'page-item'">
+                <a class="page-link" th:data-num="${i}">[[${i}]]</a>
+              </li>
+            </th:block>
+
+            <li class="page-item" th:if="${responseDTO.next}">
+              <a class="page-link" th:data-num="${responseDTO.end +1}">Next</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="purchaseOrderModalReady" tabindex="-1" aria-labelledby="purchaseOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <form th:action="@{/supplier/orderReady}" method="post" id="purchaseOrderReadyModalForm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="purchaseOrderModalReadyLabel">납품 준비 완료 처리</h5>&nbsp;&nbsp;
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body modal-lg">
+          <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+            <table class="table table-sm table-bordered table-hover align-middle fs-6">
+              <thead class="table-light small text-center">
+              <tr>
+                <th>발주 코드</th>
+                <th>자재 코드</th>
+                <th>자재명</th>
+                <th>주문 수량</th>
+                <th>단위 금액</th>
+                <th>총 금액</th>
+              </tr>
+              </thead>
+              <tbody id="readyTableBody">
+              <!-- JS로 선택된 사원 목록 추가 -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">취소</button>
+          <button type="submit" class="btn btn-success btn-sm">완료 처리</button>
+        </div>
+      </div>
+      </form>
+    </div>
+  </div>
+  <div class="modal fade" id="purchaseOrderModal" tabindex="-1" aria-labelledby="purchaseOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="purchaseOrderModalLabel">거래명세서 발급</h5>&nbsp;&nbsp;
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="purchaseOrderForm">
+            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+              <table class="table table-sm table-bordered table-hover align-middle fs-6">
+                <thead class="table-light small text-center">
+                <tr>
+                  <th>발주 코드</th>
+                  <th>자재 코드</th>
+                  <th>자재명</th>
+                  <th>주문 수량</th>
+                  <th>단위 금액</th>
+                  <th>총 금액</th>
+                </tr>
+                </thead>
+                <tbody id="purchaseOrderModalBody">
+
+                </tbody>
+              </table>
+            </div>
+
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">취소</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" onclick="previewPurchaseOrderPDF()">
+            미리보기
+          </button>
+          <button type="button" class="btn btn-primary btn-sm" onclick="generatePurchaseOrderPDF()">PDF 발행 및 발급</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="purchaseOrderModalDel" tabindex="-1" aria-labelledby="purchaseOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <form th:action="@{/supplier/orderRemove}" method="post" id="purchaseOrderDelForm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="purchaseOrderModalDelLabel">발주 정보 삭제</h5>&nbsp;&nbsp;
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body modal-lg">
+          <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+            <table class="table table-sm table-bordered table-hover align-middle fs-6">
+              <thead class="table-light small text-center">
+              <tr>
+                <th>발주 코드</th>
+                <th>자재 코드</th>
+                <th>자재명</th>
+                <th>주문 수량</th>
+                <th>단위 금액</th>
+                <th>총 금액</th>
+              </tr>
+              </thead>
+              <tbody id="deleteTableBody">
+              <!-- JS로 선택된 사원 목록 추가 -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">취소</button>
+          <button type="submit" class="btn btn-danger btn-sm">삭제</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script th:if="${message != null}" th:inline="javascript">
+    /*<![CDATA[*/
+    alert([[${message}]]);
+    /*]]>*/
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script th:src="@{/js/supplier/purchaseOrderList.js}"></script>
+</div>
+</body>

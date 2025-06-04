@@ -1,0 +1,190 @@
+.container-fluid{
+    padding: 20px;
+}
+.custom-medium-blue {
+    background-color: #66b2ff;
+    color: white;
+    border: none;
+}
+
+.custom-medium-blue:hover {
+    background-color: #3399ff;
+}
+
+.custom-medium-red {
+    background-color: #ff6666;
+    color: white;
+    border: none;
+}
+
+.custom-medium-red:hover {
+    background-color: #ff4d4d;
+}
+
+th, td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+td{
+    padding: 0.4rem 0.5rem;
+    font-size: 0.85rem;
+}
+
+ul, li{
+    cursor: pointer;
+}
+
+#planTable th,
+#planTable td {
+    text-align: center;
+    vertical-align: middle;
+}
+/* 공통 버튼 스타일 */
+.custom-btn {
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+}
+
+.custom-btn:hover {
+    opacity: 0.9;
+}
+
+.btn-green-custom {
+    background-color: #198754; /* Bootstrap btn-success 기본 초록색 */
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-green-custom:hover {
+    background-color: #157347; /* 진한 초록 */
+}
+
+.btn-purple {
+    background-color: #7e57c2; /* 연보라색 계열 */
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-purple:hover {
+    background-color: #6741b2; /* 더 진한 보라색 */
+}
+
+.icon-purple {
+    color: #7e57c2;
+}
+
+.custom-file-upload, #excelUpload {
+    display: inline-block;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #212529;
+    background-color: white;
+    border: 1px solid #212529;
+    border-radius: 0.2rem;
+    cursor: pointer;
+}
+
+.custom-file-upload:hover, #excelUpload:hover {
+    background-color: #157347;
+    border: 1px solid #157347;
+    color: white;
+}
+
+#excelFile {
+    display: none;
+}
+
+#tempDownload, #dataDownload{
+    display: inline-block;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #212529;
+    background-color: white;
+    border: 1px solid #212529;
+    border-radius: 0.2rem;
+    cursor: pointer;
+}
+
+#tempDownload:hover, #dataDownload:hover{
+    background-color: #7e57c2;
+    border: 1px solid #7e57c2;
+    color: white;
+}
+
+.custom-select-sm {
+    display: block;
+    width: 100%;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529; /* 일반 텍스트 색상, 예시로 #212529 사용 */
+    background-color: #ffffff; /* 배경 색상, 예시로 #ffffff 사용 */
+    background-clip: padding-box;
+    border: 1px solid #ced4da; /* 경계 색상, 예시로 #ced4da 사용 */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: .25rem; /* 기본적인 border-radius */
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+.icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.icon-button:hover i {
+    color: #495057;
+}
+
+.icon-button i {
+    font-size: 0.9rem;
+}
+
+#excelTable {
+    width: 100%;
+    table-layout: fixed;
+}
+
+
+#fileTable {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-top: 10px;
+}
+
+/* 테이블 셀의 고정 너비 및 내용 넘침 처리 */
+#excelTable th, #excelTable td {
+    word-wrap: break-word;  /* 긴 내용이 셀을 넘어가지 않도록 강제로 줄바꿈 */
+    padding: 8px;  /* 셀 내부 여백 */
+}
+
+/* 스크롤바 설정 */
+#fileTable::-webkit-scrollbar {
+    width: 10px;  /* 세로 스크롤바의 너비 설정 */
+}
+
+#fileTable::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 5px;
+}
+
+#fileTable::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}

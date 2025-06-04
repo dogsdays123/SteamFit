@@ -1,0 +1,323 @@
+<!-- myPage.html -->
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/basic.html}"
+      th:with="breadcrumbLevel1='마이페이지'">
+<head>
+    <title>PNS - 마이페이지</title>
+    <link href="/css/product/goodsRegister.css" rel="stylesheet">
+</head>
+<body>
+<div layout:fragment="mypage">
+    <div class="container-fluid d-flex">
+        <div class="container" style="max-width: 1000px; margin-left: 0">
+            <div class="d-flex align-items-center mb-3">
+                <h4 class="mb-0 me-2">내 정보 보기</h4>
+                <i class="bi bi-question-circle-fill fs-6 text-secondary" role="button"
+                   title="회원 정보를 수정, 삭제 할 수 있습니다."></i>
+            </div>
+            <div class="mb-3 row">
+                <label class="col-sm-2 col-form-label">이름</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" th:value="${userBy.uName}" readonly>
+                </div>
+            </div>
+
+            <div class="mb-3 row">
+                <label class="col-sm-2 col-form-label">부서</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" th:value="${userBy.userJob}" readonly>
+                </div>
+            </div>
+
+            <div class="mb-3 row">
+                <label class="col-sm-2 col-form-label">이메일</label>
+                <div class="col-sm-6">
+                    <input type="email" class="form-control" th:value="${userBy.uEmail}" readonly>
+                </div>
+            </div>
+
+            <div class="mb-3 row">
+                <label class="col-sm-2 col-form-label">연락처</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" th:value="${formattedPhone}" readonly>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button type="button" class="btn btn-primary" id="modifyModal" title="생산 계획 수정">
+                    정보수정
+                </button>
+                <button type="button" class="btn btn-danger" id="removeModal" title="생산 계획 수정">
+                    회원 탈퇴
+                </button>
+            </div>
+        </div>
+
+        <th:block th:if="${check == null}">
+            <div class="container" style="max-width: 1000px; margin-left: 0">
+                <div class="d-flex align-items-center mb-3">
+                    <h4 class="mb-0 me-2">회사 정보 보기</h4>
+                    <i class="bi bi-question-circle-fill fs-6 text-secondary" role="button"
+                       title="자회사의 회사 정보를 수정할 수 있습니다."></i>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label">회사명</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" th:value="${supplier.sName}" readonly>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label">대표자</label>
+                    <div class="col-sm-6">
+                        <input type="email" class="form-control" th:value="${supplier.sExponent}" readonly>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label">매니저</label>
+                    <div class="col-sm-6">
+                        <input type="email" class="form-control" th:value="${supplier.sManager}" readonly>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label">사업자번호</label>
+                    <div class="col-sm-6">
+                        <input type="email" class="form-control" th:value="${supplier.sRegNum}" readonly>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label">회사 주소</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" th:value="${supplier.sAddress}" readonly>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label">상세 주소</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" th:value="${supplier.sAddressExtra}" readonly>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label">s_business_array</label>
+                    <div class="col-sm-6">
+                        <input type="email" class="form-control" th:value="${supplier.sBusinessArray}" readonly>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label">s_business_type</label>
+                    <div class="col-sm-6">
+                        <input type="email" class="form-control" th:value="${supplier.sBusinessType}" readonly>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label">팩스번호</label>
+                    <div class="col-sm-6">
+                        <input type="email" class="form-control" th:value="${supplier.sFax}" readonly>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label">회사 전화번호</label>
+                    <div class="col-sm-6">
+                        <input type="email" class="form-control" th:value="${supplier.sPhone}" readonly>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label">담장자 직통번호</label>
+                    <div class="col-sm-6">
+                        <input type="email" class="form-control" th:value="${supplier.sPhoneDirect}" readonly>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="button" class="btn btn-primary" id="modifySupplierModal">
+                        정보수정
+                    </button>
+                </div>
+            </div>
+        </th:block>
+    </div>
+
+    <!--  마이페이지 모달창 start -->
+    <div class="modal fade" id="modify" tabindex="-1" aria-labelledby="modifyModal"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form th:action="@{/mainPage/myPage}" method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="purchaseOrderModalLabel">내 정보 수정</h5>&nbsp;&nbsp;
+                        <small class="text-muted mt-2 d-block"> <span class="text-danger">*</span> 는 수정 가능합니다.</small>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-3 mb-3">
+                            <div class="col-12">
+                                <label class="form-label">이름</label>
+                                <input type="text" id="uName" name="uName" class="form-control form-control-sm"
+                                       th:value="${userBy.uName}" readonly>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">생년월일</label>
+                                <input type="text" id="uBirthDay" name="uBirthDay" class="form-control form-control-sm"
+                                       th:value="${userBy.uBirthDay}" readonly>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">아이디</label>
+                                <input type="text" id="uId" name="uId" class="form-control form-control-sm"
+                                       th:value="${userBy.uId}" readonly>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label"><span class="text-danger">*</span> 주소</label>
+                                <input type="text" id="uAddress" name="uAddress" class="form-control form-control-sm"
+                                       th:value="${userBy.uAddress}">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label"><span class="text-danger">*</span> 이메일</label>
+                                <input type="text" id="uEmail" name="uEmail" class="form-control form-control-sm"
+                                       th:value="${userBy.uEmail}" required>
+                                <textarea id="email-feedback" class="mt-1 input-feedback text-danger"
+                                          style="all: unset; width: 20vw; border: none; outline: none;" readonly>
+                                </textarea>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label"><span class="text-danger">*</span> 전화번호</label>
+                                <input type="text" id="uPhone" name="uPhone" class="form-control form-control-sm"
+                                       th:value="${userBy.uPhone}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="uPassword" class="form-label"><span style="color: red;">*</span>&nbsp 비밀번호
+                                    <span style="font-size: 0.6rem;">6자 이상, 16자 이하의 영어와 숫자의 조합으로 구성</span></label>
+                                <input type="password" class="form-control" id="uPassword"
+                                       required
+                                       minlength="6"
+                                       maxlength="16"
+                                       pattern="^[a-zA-Z0-9]{6,16}$">
+                            </div>
+                            <div class="mb-3">
+                                <label for="aPswCheck" class="form-label"><span style="color: red;">*</span>&nbsp 비밀번호
+                                    확인</label>
+                                <input type="password" class="form-control" name="uPassword" id="aPswCheck"
+                                       required
+                                       minlength="6"
+                                       maxlength="16"
+                                       pattern="^[a-zA-Z0-9]{6,16}$">
+                                <div id="password-feedback" class="mt-1 input-feedback text-success"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">취소</button>
+                        <button type="submit" id="signupButton" class="btn btn-primary btn-sm">수정</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- 마이페이지 모달창 end -->
+
+    <!--  회사 모달창 start -->
+    <th:block th:if="${check == null}">
+        <div class="modal fade" id="modifySupplier" tabindex="-1" aria-labelledby="modifySupplierModal"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form th:action="@{/mainPage/myPageSupplier}" method="post">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="SupplierModal">회사 정보 수정</h5>&nbsp;&nbsp;
+                            <small class="text-muted mt-2 d-block"> <span class="text-danger">*</span> 는 수정
+                                가능합니다.</small>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row g-3 mb-3">
+                                <div class="col-12">
+                                    <label class="form-label"><span class="text-danger">*</span> 회사명</label>
+                                    <input type="text" class="form-control form-control-sm" name="sName"
+                                           th:value="${supplier.sName}">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label"><span class="text-danger">*</span> 대표자</label>
+                                    <input type="text" class="form-control form-control-sm" name="sExponent"
+                                           th:value="${supplier.sExponent}">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label"><span class="text-danger">*</span> 매니저</label>
+                                    <input type="text" class="form-control form-control-sm" name="sManager"
+                                           th:value="${supplier.sManager}">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">사업자번호</label>
+                                    <input type="text" class="form-control form-control-sm"
+                                           th:value="${supplier.sRegNum}" readonly>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label"><span class="text-danger">*</span> 회사 주소</label>
+                                    <input type="text" class="form-control form-control-sm" name="sAddress"
+                                           th:value="${supplier.sAddress}">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label"><span class="text-danger">*</span> 상세 주소</label>
+                                    <input type="text" class="form-control form-control-sm" name="sAddressExtra"
+                                           th:value="${supplier.sAddressExtra}">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label"><span class="text-danger">*</span>
+                                        s_business_array</label>
+                                    <input type="text" class="form-control form-control-sm" name="sBusinessArray"
+                                           th:value="${supplier.sBusinessArray}">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label"><span class="text-danger">*</span> s_business_type</label>
+                                    <input type="text" class="form-control form-control-sm" name="sBusinessType"
+                                           th:value="${supplier.sBusinessType}">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label"><span class="text-danger">*</span> 팩스번호</label>
+                                    <input type="text" class="form-control form-control-sm" name="sFax"
+                                           th:value="${supplier.sFax}">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label"><span class="text-danger">*</span> 회사 전화번호</label>
+                                    <input type="text" class="form-control form-control-sm" name="sPhone"
+                                           th:value="${supplier.sPhone}">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label"><span class="text-danger">*</span> 담당자 직통번호</label>
+                                    <input type="text" class="form-control form-control-sm" name="sPhoneDirect"
+                                           th:value="${supplier.sPhoneDirect}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">취소</button>
+                            <button type="submit" id="signupSupplierButton" class="btn btn-primary btn-sm">수정</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </th:block>
+    <!-- 회사 모달창 end -->
+
+    <!-- 탈퇴 모달창 end -->
+    <div class="modal fade" id="remove" tabindex="-1" aria-labelledby="removeModal"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="removeModalLabel" th:text="${userBy.uId} + ' 을(를) 정말 삭제하시겠습니까?'"></h5>&nbsp;&nbsp;
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-footer">
+                        <button type="submit" id="removeButton" class="btn btn-danger btn-sm">삭제</button>
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">취소</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 탈퇴 모달창 end -->
+
+    <script src="/js/mainPage/myPage.js" defer></script>
+</div>

@@ -1,0 +1,43 @@
+.container-fluid{
+    padding: 20px;
+}
+
+th, td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+td{
+    padding: 0.4rem 0.5rem;
+    font-size: 0.85rem;
+}
+
+
+#hoverPopup {
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 4px 8px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    gap: 0.5rem;
+    display: none;
+}
+
+.icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.icon-button:hover i {
+    color: #495057;
+}
+
+.icon-button i {
+    font-size: 0.9rem;
+}
+
+tr.hover-row.selected {
+    background-color: #f1f1f1;
+    outline: 2px solid #0d6efd;
+}

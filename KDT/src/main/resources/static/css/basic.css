@@ -1,0 +1,377 @@
+/* 로고용 폰트 */
+@font-face {
+    font-family: 'Giants-Bold';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2307-1@1.1/Giants-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* 기본 폰트 */
+
+@font-face {
+    font-family: 'S-CoreDream-3Light';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-3Light.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'BMDOHYEON';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMDOHYEON.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'NotoSansKR';
+    src: url('https://fonts.gstatic.com/s/notosanskr/v27/Pby6FmXiEBPT4ITbgNA5CgmOelzGdsJg.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* 전체 페이지 스타일 */
+body {
+    font-family: 'NotoSansKR', sans-serif;
+    /* 기본 폰트 설정 */
+    background-color: white;
+    /* 전체 배경색 (연한 회색) */
+}
+
+/* 네비게이션 바 스타일 */
+.navbar {
+    background-color: #ffffff;
+    /* 배경색: 흰색 */
+    /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); */
+    /* 네비게이션 바 아래 그림자 효과 */
+    padding: 12px 0;
+    /* 위아래 여백 조정 */
+}
+
+/* 로고 스타일 */
+.navbar-brand {
+    color: #007bff;
+    /* 파란색 */
+    font-size: 1.8rem;
+    /* 글자 크기 */
+    margin-top: 8px;
+    margin-left: 20px;
+}
+
+.navbar-brand:hover,
+.navbar-brand:focus {
+    color: #007bff !important;
+}
+
+.rogo-span {
+    color: #007bff;
+}
+
+/* 검색창 스타일 */
+.search-box {
+    position: relative;
+    width: 500px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 10px 15px 10px 40px;
+    /* 왼쪽 padding을 40px로 설정하여 아이콘과 겹치지 않도록 함 */
+    border-radius: 50px;
+    border: 2px solid #007bff;
+    font-size: 16px;
+}
+
+.search-box .fas.fa-search {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    /* 아이콘이 입력창 안에서 왼쪽에 위치 */
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: #007bff;
+}
+
+/* 로그인 및 회원가입 링크 스타일 */
+.auth-links {
+    margin-right: 20px;
+    display: flex;
+    /* 가로 정렬 */
+    align-items: center;
+    /* 세로 중앙 정렬 */
+    gap: 10px;
+    /* 요소 간격 조정 */
+    font-size: 0.9rem;
+    /* 글자 크기 조정 */
+    font-weight: 600;
+    /* 글자 굵기 조정 */
+}
+
+/* 로그인 및 회원가입 버튼 스타일 */
+.other-menu button {
+    color: #373F57;
+    /* 파란색 글자 */
+    text-decoration: none;
+    /* 밑줄 제거 */
+    all: unset;
+
+    padding: 8px 15px;
+    /* 내부 여백 추가 */
+    transition: all 0.3s ease-in-out;
+    /* 부드러운 애니메이션 효과 */
+}
+
+.btns {
+    color: #373F57;
+    /* 파란색 글자 */
+    text-decoration: none;
+    /* 밑줄 제거 */
+    all: unset;
+
+    padding: 8px 15px;
+    /* 내부 여백 추가 */
+    transition: all 0.3s ease-in-out;
+    /* 부드러운 애니메이션 효과 */
+}
+
+/* 로그인 및 회원가입 호버 효과 */
+.auth-links .basic-btn:hover {
+    border-radius: 10px;
+    background-color: #007bff;
+}
+
+/* 로그인과 회원가입 사이 구분선 스타일 */
+.separator {
+    color: #ccc;
+    /* 연한 회색 */
+    font-weight: bold;
+    /* 굵게 설정 */
+}
+
+/* 회원가입 모달창 가입하기 버튼 스타일 */
+#signupButton,
+#loginButton {
+    margin-top: 10px;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+/* 회원가입 모달창 가입하기 버튼 호버 스타일 */
+#signupButton:hover,
+#loginButton:hover {
+    background-color: #0066cc;
+}
+
+.signup-modal-body {
+    padding-top: 0px;
+}
+
+.div-sign-login label {
+    font-size: 0.95rem;
+    font-weight: bold;
+}
+
+.modal-btn {
+    font-weight: bold;
+}
+
+/* 소셜 로그인 */
+
+.login-container {
+    text-align: center;
+    padding: 40px;
+    border-radius: 10px;
+}
+
+.social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.social-btn img {
+    width: 30px;
+    height: 30px;
+}
+
+.social-btn:hover {
+    transform: scale(1.1);
+}
+
+.google-btn {
+    border: 1px solid #96a0b5;
+    background-color: #ffffff;
+
+}
+
+.kakao-btn {
+    border: 1px solid #fee500;
+    background-color: #fee500;
+    color: #3A1D1D;
+}
+
+.kakao-rogo {
+    font-size: 1.5rem;
+}
+
+.social-login-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+
+.text-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.line {
+    flex-grow: 1;
+    border: none;
+    border-top: 1px solid #5c667b;
+    margin: 0 10px;
+}
+
+.hr-text {
+    color: #5c667b;
+    /* font-weight: bold; */
+    white-space: nowrap;
+}
+
+
+
+/* 네비게이션 메뉴 스타일 */
+.nav-container {
+    padding: 10px;
+    display: flex;
+    /* 가로 정렬 */
+    justify-content: center;
+    /* 중앙 정렬 */
+    border-top: 1px solid #F0ECE5;
+    border-bottom: 1px solid #F0ECE5;
+
+    background-color: #ffffff;
+    /* 배경색 흰색 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.01);
+    /* 아래 그림자 효과 */
+    /* padding: 5px 10px; */
+    /* 위아래 여백 */
+}
+
+/* 네비게이션 메뉴 아이템 스타일 */
+.nav .nav-item {
+    white-space: nowrap;
+    margin: 0 20px;
+    /* 좌우 간격 조정 */
+}
+
+/* 네비게이션 링크 스타일 */
+.nav-link {
+    font-size: 1.1rem;
+    /* 글자 크기 */
+    font-weight: 600;
+    /* 글자 굵기 */
+    color: #333;
+    /* 글자색: 어두운 회색 */
+    padding: 17px 20px 12px 20px;
+    /* 내부 여백 조정 */
+    transition: color 0.3s, background-color 0.3s;
+    /* 부드러운 효과 */
+    border-radius: 10px;
+    /* 둥근 모서리 */
+
+    transition: all 0.3s ease-in-out;
+}
+
+/* 네비게이션 링크 호버 효과 */
+.nav-link:hover {
+    color: #007bff;
+    /* 파란색으로 변경 */
+
+    transform: scale(1.1);
+}
+
+/* 네비게이션 드롭다운 메뉴 스타일 */
+.dropdown-main:hover .dropdown-menu {
+    display: block;
+    text-align: center;
+}
+
+.dropdown-main .dropdown-menu {
+    display: none;
+}
+
+/* 푸터 스타일 */
+footer {
+    padding: 0px;
+    font-size: 0.9rem;
+}
+
+footer a {
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* 입력창 placeholder 폰트 사이즈 통일 */
+input::placeholder {
+    font-size: 0.9rem;
+}
+
+.signal-btn {
+    padding: 5px !important;
+    border-radius: 10px;
+
+    --bs-btn-active-bg: #fff !important;
+    --bs-btn-active-color: #007bff;
+}
+
+.signal-btn:hover,
+.signal-btn:active {
+    background-color: #fff;
+    border-radius: 10px;
+    color: #007bff;
+}
+
+.fa-bell {
+    font-size: 1.2rem;
+}
+
+.input-feedback {
+    font-size: 0.9em;
+    height: 20px;
+}
+
+.breadcrumb {
+    --bs-breadcrumb-divider: '>';
+}
+
+.breadcrumb-item a {
+    text-decoration: none;
+    color: #212529;
+    font-weight: 500;
+}
+
+.breadcrumb-item.active {
+    color: #6c757d;
+    /* font-weight: bold; */
+}
+
+
+.btn-default {
+    --bs-btn-active-bg: #fff !important;
+    --bs-btn-active-color: #007bff;
+    /* border-color: #dc3545;
+    background-color: #dc3545;
+    color: #fff; */
+}

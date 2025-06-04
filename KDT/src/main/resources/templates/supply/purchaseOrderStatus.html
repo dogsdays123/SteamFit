@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/basic.html}"
+      th:with="breadcrumbLevel1='발주 관리', breadcrumbCurrent='발주 진행 현황'">
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="/css/supply/list.css" rel="stylesheet">
+</head>
+<body>
+  <div layout:fragment="spPoStatus">
+    <div class="container-fluid">
+      <div class="container" style="max-width: 1200px; margin-left: 0;">
+        <div class="d-flex align-items-center mb-3">
+          <h4 class="mb-0 me-2">발주 진행 현황</h4>
+          <i class="bi bi-question-circle-fill fs-6 text-secondary" role="button" title="발주 진행 현황 가이드"></i>
+        </div>
+        <form>
+          <div class="row g-2 align-items-end">
+            <div class="col-md-2">
+              <label for="orderDate" class="form-label small">발주일</label>
+              <input type="date" class="form-control form-control-sm" id="orderDate" title="발주일자">
+            </div>
+            <div class="col-md-2">
+              <label for="supplierName" class="form-label small">공급 업체명</label>
+              <select class="form-select form-select-sm" id="supplierName" title="공급업체명">
+                <option selected>전체</option>
+                <option value="-">-</option>
+                <option value="-">-</option>
+                <option value="-">-</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <label for="materialName" class="form-label small">자재명</label>
+              <select class="form-select form-select-sm" id="materialName" title="자재명">
+                <option selected>전체</option>
+                <option value="-">-</option>
+                <option value="-">-</option>
+                <option value="-">-</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <label for="supplyDate" class="form-label small">납기일</label>
+              <input type="date" class="form-control form-control-sm" id="supplyDate" title="납기일자">
+            </div>
+            <div class="col-md-1">
+              <label for="payMethod" class="form-label small">입고 여부</label>
+              <select class="form-select form-select-sm" id="payMethod" title="입고여부">
+                <option selected>전체</option>
+                <option value="-">-</option>
+                <option value="-">-</option>
+                <option value="-">-</option>
+              </select>
+            </div>
+            <div class="col-md-1">
+              <label for="status" class="form-label small">상태</label>
+              <select class="form-select form-select-sm" id="status" title="상태">
+                <option selected>전체</option>
+                <option value="-">발주완료</option>
+                <option value="-">납품완료</option>
+                <option value="-">납품진행중</option>
+              </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end gap-2">
+              <button type="button" class="btn btn-dark btn-sm w-100">적용</button>
+              <button type="button" class="clearBtn btn btn-outline-dark btn-sm w-100" title="필터 초기화">초기화</button>
+            </div>
+          </div>
+        </form>
+        <!-- 2줄: 검색어 입력 -->
+        <form>
+          <div class="row g-2 mt-2">
+            <div class="col-md-6">
+              <div class="input-group input-group-sm">
+                <span class="input-group-text bg-white"><i class="fas fa-search text-secondary"></i></span>
+                <input type="text" class="form-control" id="keyword" title="검색어 입력" placeholder="검색어 입력">
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="container" style="max-width: 1600px; margin-left: 0;">
+        <div class="d-flex justify-content-end mb-2">
+          <form>
+            <div class="col-auto">
+              <select class="form-select form-select-sm" title="정렬 갯수 필터">
+                <option selected>전체</option>
+                <option value="20">20개씩</option>
+                <option value="30">30개씩</option>
+                <option value="50">50개씩</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="bg-white rounded">
+          <div style="max-height: 550px; overflow-y: auto;">
+            <table class="table table-sm table-bordered table-hover align-middle fs-6">
+              <thead class="table-light small text-center">
+              <tr>
+                <th>발주 코드</th>
+                <th>발주일</th>
+                <th>공급 업체</th>
+                <th>자재명</th>
+                <th>발주 수량</th>
+                <th>총 금액</th>
+                <th>납기일</th>
+                <th>입고 여부</th>
+                <th>상태</th>
+                <th>발주자</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <td>BALJU001</td>
+                <td>2025-04-11</td>
+                <td>SAMSON</td>
+                <td>안장A</td>
+                <td>150</td>
+                <td>233,750</td>
+                <td>2025-04-23</td>
+                <td>입고완료</td>
+                <td>입고완료</td>
+                <td>박시현</td>
+              </tr>
+              <tr>
+                <td>ANJA10002</td>
+                <td>2025-04-15</td>
+                <td>카인드몰</td>
+                <td>페달C</td>
+                <td>220</td>
+                <td>560,120</td>
+                <td>2025-04-30</td>
+                <td>미입고</td>
+                <td>진행중</td>
+                <td>김하영</td>
+              </tr>
+              <tr>
+                <td>CONS10002</td>
+                <td>2025-04-13</td>
+                <td>광교철강</td>
+                <td>프레임EA</td>
+                <td>50</td>
+                <td>1,100,700</td>
+                <td>2025-05-02</td>
+                <td>부분입고</td>
+                <td>진행중</td>
+                <td>최성일</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
