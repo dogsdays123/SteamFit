@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SteamFit 홈</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: '770Balsa';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2505-1@1.0/770Balsa.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'S-CoreDream-3Light';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-3Light.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            font-family: 'S-CoreDream-3Light';
+        }
+
+        .logo {
+            font-family: '770Balsa';
+            font-size: 1.2rem;
+        }
+
+        .scroll-hidden::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scroll-hidden {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+
+<body class="bg-[#f1f1f1] text-[#030303]">
+
+    <!-- ✅ [1] 검색 화면 오버레이 -->
+    <div id="searchPage" class="hidden fixed inset-0 bg-white z-[999] flex flex-col">
+        <div class="p-4 border-b flex items-center">
+            <input type="text" id="searchInput" placeholder="게임 검색..." class="w-full border px-4 py-2 rounded-md"
+                oninput="searchGames(this.value)" autofocus>
+            <button class="ml-2 text-gray-500" onclick="closeSearchPage()"><i class="bi bi-x-lg text-xl"></i></button>
+        </div>
+        <ul id="searchResults" class="p-4 space-y-3 overflow-y-auto flex-1"></ul>
+    </div>
+
+    <!-- ✅ [3] 게임 카드 모달 -->
+    <div id="gameModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+        <div class="bg-white rounded-xl w-80 p-6 shadow-xl space-y-4">
+            <h3 id="gameModalTitle" class="text-lg font-bold text-[#000]"></h3>
+            <div id="gameModalActions" class="space-y-2"></div>
+            <button onclick="closeGameModal()" class="w-full text-sm text-gray-500 mt-2">닫기</button>
+        </div>
+    </div>
+
+    <!-- ✅ [4] 상단 고정 헤더 -->
+    <!-- ✅ 전체 헤더 -->
+    <header class="w-full bg-white shadow-sm fixed top-0 z-50">
+        <!-- ✅ 상단: 로고 / 검색창 / 햄버거 -->
+        <div class="flex items-center justify-between p-4">
+            <!-- 로고 -->
+            <div class="flex-shrink-0 logo">
+                스팀핏
+            </div>
+
+            <!-- 검색창 -->
+            <div class="flex-grow px-3">
+                <div class="relative">
+                    <input type="text" placeholder="전체 검색" onclick="openSearchPage()"
+                        class="w-full pl-4 pr-10 py-1.5 bg-gray-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#123458]">
+                    <button class="pr-2 absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
+                        onclick="openSearchPage()" aria-readonly="true">
+                        <i class="bi bi-search text-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 햄버거 메뉴 -->
+            <div class="relative">
+                <button onclick="toggleDropdown()" class="text-2xl text-gray-700">
+                    <i class="bi bi-list"></i>
+                </button>
+
+                <!-- ✅ 드롭다운 메뉴 -->
+                <div id="dropdownMenu"
+                    class="hidden absolute right-0 mt-2 w-52 bg-white border border-gray-200 rounded-md shadow-lg text-sm z-50">
+                    <ul class="py-2">
+                        <li><a href="#" class="flex items-center px-4 py-2 hover:bg-gray-100"><i
+                                    class="bi bi-person me-2"></i> 마이페이지</a></li>
+                        <li><a href="#" class="flex items-center px-4 py-2 hover:bg-gray-100"><i
+                                    class="bi bi-bell me-2"></i> 알림 <span
+                                    class="ml-auto text-[#123458] font-bold">(1)</span></a></li>
+                        <li><a href="#" class="flex items-center px-4 py-2 hover:bg-gray-100"><i
+                                    class="bi bi-star me-2"></i> 즐겨찾기</a></li>
+                        <hr class="my-1">
+                        <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">공지사항</a></li>
+                        <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">자주 묻는 질문</a></li>
+                        <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">스팀핏 소개</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ✅ 하단 카테고리 탭 메뉴 -->
+        <!-- <nav class="flex px-4 py-2 space-x-4 overflow-x-auto text-sm font-medium border-t border-gray-100">
+            <a href="#" class="text-[#123458] font-bold whitespace-nowrap">HOME</a>
+            <a href="#" class="text-gray-700 whitespace-nowrap">추천게임</a>
+            <a href="#" class="text-gray-700 whitespace-nowrap">인기장르</a>
+            <a href="#" class="text-gray-700 whitespace-nowrap">출시예정</a>
+            <a href="#" class="text-gray-700 whitespace-nowrap">커뮤니티</a>
+        </nav> -->
+    </header>
+
+
+
+    <main class="pt-20 pb-24">
+
+        <!-- ✅ [5] 출시 예정 게임 슬라이드 -->
+        <section class="px-4 mb-6">
+            <div class="flex justify-between items-center mb-2">
+                <!-- 제목 + 더보기 버튼 -->
+                <h2 class="text-lg font-semibold flex items-center">
+                    이번 달 인기 출시작
+                    <!-- 더보기 버튼 (텍스트형) -->
+                    <a href="/released"
+                        class="ml-3 text-sm text-[#123458] hover:underline font-normal hidden sm:inline">더보기</a>
+                </h2>
+                <!-- 슬라이드 버튼 -->
+                <div class="flex items-center space-x-2">
+                    <!-- 모바일용 더보기 버튼 -->
+                    <a href="/released"
+                        class="sm:hidden text-xs px-2 py-1 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-100 transition">더보기</a>
+                    <button onclick="slideLeft('releaseSlider')">
+                        <i class="bi bi-chevron-left text-xl"></i>
+                    </button>
+                    <button onclick="slideRight('releaseSlider')">
+                        <i class="bi bi-chevron-right text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="releaseSlider"
+                class="overflow-x-auto scroll-smooth whitespace-nowrap space-x-4 flex scroll-hidden">
+                <!-- ✅ 미니 게임 카드 9 -->
+                <div class="inline-block flex-shrink-0 w-32 sm:w-36 bg-white rounded-lg shadow overflow-hidden cursor-pointer transition-transform transform hover:scale-105"
+                    onclick="openGameModal('컵헤드', 'https://store.steampowered.com/app/268910', '009')">
+                    <div class="aspect-[4/3] w-full bg-gray-100 relative">
+                        <div
+                            class="absolute top-1 right-1 bg-black bg-opacity-60 text-white text-[10px] px-1.5 py-0.5 rounded-full z-10">
+                            ★ 4.6</div>
+                        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/268910/header.jpg" alt="컵헤드"
+                            class="w-full h-full object-cover" />
+                    </div>
+                    <div class="px-2 py-1 space-y-0.5">
+                        <div class="text-[12px] font-semibold text-gray-800 truncate">컵헤드</div>
+                        <div class="text-[10px] text-gray-500">발매일: 2017.09.30</div>
+                    </div>
+                </div>
+
+                <!-- ✅ 미니 게임 카드 10 -->
+                <div class="inline-block flex-shrink-0 w-32 sm:w-36 bg-white rounded-lg shadow overflow-hidden cursor-pointer transition-transform transform hover:scale-105"
+                    onclick="openGameModal('모뉴먼트 밸리', 'https://store.steampowered.com/app/1046030', '010')">
+                    <div class="aspect-[4/3] w-full bg-gray-100 relative">
+                        <div
+                            class="absolute top-1 right-1 bg-black bg-opacity-60 text-white text-[10px] px-1.5 py-0.5 rounded-full z-10">
+                            ★ 4.4</div>
+                        <img src="https://i.namu.wiki/i/vImCyZPsav5aNgX7dETkpjMNtXvbGcf_lUQ0t7F9L9AnihMDLq7GQZ4-riLTwP6hyA_reGWOAKSQAbC2XLcK5w.webp"
+                            alt="모뉴먼트 밸리" class="w-full h-full object-cover" />
+                    </div>
+                    <div class="px-2 py-1 space-y-0.5">
+                        <div class="text-[12px] font-semibold text-gray-800 truncate">모뉴먼트 밸리</div>
+                        <div class="text-[10px] text-gray-500">발매일: 2019.07.12</div>
+                    </div>
+                </div>
+
+                <!-- ✅ 미니 게임 카드 11 -->
+                <div class="inline-block flex-shrink-0 w-32 sm:w-36 bg-white rounded-lg shadow overflow-hidden cursor-pointer transition-transform transform hover:scale-105"
+                    onclick="openGameModal('오리와 눈먼 숲', 'https://store.steampowered.com/app/261570', '011')">
+                    <div class="aspect-[4/3] w-full bg-gray-100 relative">
+                        <div
+                            class="absolute top-1 right-1 bg-black bg-opacity-60 text-white text-[10px] px-1.5 py-0.5 rounded-full z-10">
+                            ★ 4.8</div>
+                        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/261570/header.jpg" alt="오리와 눈먼 숲"
+                            class="w-full h-full object-cover" />
+                    </div>
+                    <div class="px-2 py-1 space-y-0.5">
+                        <div class="text-[12px] font-semibold text-gray-800 truncate">오리와 눈먼 숲</div>
+                        <div class="text-[10px] text-gray-500">발매일: 2015.03.11</div>
+                    </div>
+                </div>
+
+                <!-- ✅ 미니 게임 카드 12 -->
+                <div class="inline-block flex-shrink-0 w-32 sm:w-36 bg-white rounded-lg shadow overflow-hidden cursor-pointer transition-transform transform hover:scale-105"
+                    onclick="openGameModal('인사이드', 'https://store.steampowered.com/app/304430', '012')">
+                    <div class="aspect-[4/3] w-full bg-gray-100 relative">
+                        <div
+                            class="absolute top-1 right-1 bg-black bg-opacity-60 text-white text-[10px] px-1.5 py-0.5 rounded-full z-10">
+                            ★ 4.7</div>
+                        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/304430/header.jpg" alt="인사이드"
+                            class="w-full h-full object-cover" />
+                    </div>
+                    <div class="px-2 py-1 space-y-0.5">
+                        <div class="text-[12px] font-semibold text-gray-800 truncate">인사이드</div>
+                        <div class="text-[10px] text-gray-500">발매일: 2016.07.07</div>
+                    </div>
+                </div>
+
+                <!-- ✅ 미니 게임 카드 13 -->
+                <div class="inline-block flex-shrink-0 w-32 sm:w-36 bg-white rounded-lg shadow overflow-hidden cursor-pointer transition-transform transform hover:scale-105"
+                    onclick="openGameModal('림보', 'https://store.steampowered.com/app/48000', '013')">
+                    <div class="aspect-[4/3] w-full bg-gray-100 relative">
+                        <div
+                            class="absolute top-1 right-1 bg-black bg-opacity-60 text-white text-[10px] px-1.5 py-0.5 rounded-full z-10">
+                            ★ 4.6</div>
+                        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/48000/header.jpg" alt="림보"
+                            class="w-full h-full object-cover" />
+                    </div>
+                    <div class="px-2 py-1 space-y-0.5">
+                        <div class="text-[12px] font-semibold text-gray-800 truncate">림보</div>
+                        <div class="text-[10px] text-gray-500">발매일: 2011.08.02</div>
+                    </div>
+                </div>
+
+                <!-- ✅ 미니 게임 카드 14 -->
+                <div class="inline-block flex-shrink-0 w-32 sm:w-36 bg-white rounded-lg shadow overflow-hidden cursor-pointer transition-transform transform hover:scale-105"
+                    onclick="openGameModal('파이어워치', 'https://store.steampowered.com/app/383870', '014')">
+                    <div class="aspect-[4/3] w-full bg-gray-100 relative">
+                        <div
+                            class="absolute top-1 right-1 bg-black bg-opacity-60 text-white text-[10px] px-1.5 py-0.5 rounded-full z-10">
+                            ★ 4.3</div>
+                        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/383870/header.jpg" alt="파이어워치"
+                            class="w-full h-full object-cover" />
+                    </div>
+                    <div class="px-2 py-1 space-y-0.5">
+                        <div class="text-[12px] font-semibold text-gray-800 truncate">파이어워치</div>
+                        <div class="text-[10px] text-gray-500">발매일: 2016.02.09</div>
+                    </div>
+                </div>
+
+                <!-- ✅ 미니 게임 카드 15 -->
+                <div class="inline-block flex-shrink-0 w-32 sm:w-36 bg-white rounded-lg shadow overflow-hidden cursor-pointer transition-transform transform hover:scale-105"
+                    onclick="openGameModal('더 위트니스', 'https://store.steampowered.com/app/210970', '015')">
+                    <div class="aspect-[4/3] w-full bg-gray-100 relative">
+                        <div
+                            class="absolute top-1 right-1 bg-black bg-opacity-60 text-white text-[10px] px-1.5 py-0.5 rounded-full z-10">
+                            ★ 4.2</div>
+                        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/210970/header.jpg" alt="더 위트니스"
+                            class="w-full h-full object-cover" />
+                    </div>
+                    <div class="px-2 py-1 space-y-0.5">
+                        <div class="text-[12px] font-semibold text-gray-800 truncate">더 위트니스</div>
+                        <div class="text-[10px] text-gray-500">발매일: 2016.01.26</div>
+                    </div>
+                </div>
+
+                <!-- ✅ 미니 게임 카드 16 -->
+                <div class="inline-block flex-shrink-0 w-32 sm:w-36 bg-white rounded-lg shadow overflow-hidden cursor-pointer transition-transform transform hover:scale-105"
+                    onclick="openGameModal('스피릿페어러', 'https://store.steampowered.com/app/972660', '016')">
+                    <div class="aspect-[4/3] w-full bg-gray-100 relative">
+                        <div
+                            class="absolute top-1 right-1 bg-black bg-opacity-60 text-white text-[10px] px-1.5 py-0.5 rounded-full z-10">
+                            ★ 4.5</div>
+                        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/972660/header.jpg" alt="스피릿페어러"
+                            class="w-full h-full object-cover" />
+                    </div>
+                    <div class="px-2 py-1 space-y-0.5">
+                        <div class="text-[12px] font-semibold text-gray-800 truncate">스피릿페어러</div>
+                        <div class="text-[10px] text-gray-500">발매일: 2020.08.18</div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ✅ [6] 장르별 인기 게임 슬라이드 -->
+        <section class="px-4 mb-6">
+            <div class="flex justify-between items-center mb-2">
+                <!-- 제목 + 더보기 (PC용) -->
+                <h2 class="text-lg font-semibold flex items-center">
+                    장르별 인기 게임
+                    <a href="/popular-genres"
+                        class="ml-3 text-sm text-[#123458] hover:underline font-normal hidden sm:inline">더보기</a>
+                </h2>
+
+                <!-- 슬라이드 버튼 + 더보기 (모바일용) -->
+                <div class="flex items-center space-x-2">
+                    <!-- 모바일 더보기 버튼 -->
+                    <a href="/popular-genres"
+                        class="sm:hidden text-xs px-2 py-1 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-100 transition">
+                        더보기
+                    </a>
+                    <button onclick="slideLeft('genreSlider')">
+                        <i class="bi bi-chevron-left text-xl"></i>
+                    </button>
+                    <button onclick="slideRight('genreSlider')">
+                        <i class="bi bi-chevron-right text-xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex space-x-2 mb-3">
+                <button class="px-3 py-1 bg-[#123458] text-white rounded-full text-sm">액션</button>
+                <button class="px-3 py-1 bg-gray-200 rounded-full text-sm">RPG</button>
+                <button class="px-3 py-1 bg-gray-200 rounded-full text-sm">시뮬레이션</button>
+                <button class="px-3 py-1 bg-gray-200 rounded-full text-sm">공포</button>
+            </div>
+            <div id="genreSlider" class="overflow-x-auto scroll-smooth whitespace-nowrap space-x-4 flex scroll-hidden">
+
+
+                <!-- ✅ 미니 게임 카드 1 -->
+                <div class="inline-block flex-shrink-0 w-32 sm:w-36 bg-white rounded-lg shadow overflow-hidden cursor-pointer transition-transform transform hover:scale-105"
+                    onclick="openGameModal('하데스', 'https://store.steampowered.com/app/1145360', '001')">
+                    <div class="aspect-[4/3] w-full bg-gray-100 relative">
+                        <div
+                            class="absolute top-1 right-1 bg-black bg-opacity-60 text-white text-[10px] px-1.5 py-0.5 rounded-full z-10">
+                            ★ 4.9</div>
+                        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1145360/header.jpg" alt="하데스"
+                            class="w-full h-full object-cover" />
+                    </div>
+                    <div class="px-2 py-1 space-y-0.5">
+                        <div class="text-[12px] font-semibold text-gray-800 truncate">하데스</div>
+                        <div class="text-[10px] text-gray-500">발매일: 2020.09.17</div>
+                    </div>
+                </div>
+
+                <!-- ✅ 미니 게임 카드 2 -->
+                <div class="inline-block flex-shrink-0 w-32 sm:w-36 bg-white rounded-lg shadow overflow-hidden cursor-pointer transition-transform transform hover:scale-105"
+                    onclick="openGameModal('할로우 나이트', 'https://store.steampowered.com/app/367520', '002')">
+                    <div class="aspect-[4/3] w-full bg-gray-100 relative">
+                        <div
+                            class="absolute top-1 right-1 bg-black bg-opacity-60 text-white text-[10px] px-1.5 py-0.5 rounded-full z-10">
+                            ★ 4.8</div>
+                        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/367520/header.jpg" alt="할로우 나이트"
+                            class="w-full h-full object-cover" />
+                    </div>
+                    <div class="px-2 py-1 space-y-0.5">
+                        <div class="text-[12px] font-semibold text-gray-800 truncate">할로우 나이트</div>
+                        <div class="text-[10px] text-gray-500">발매일: 2017.02.24</div>
+                    </div>
+                </div>
+
+                <!-- ✅ 미니 게임 카드 3 -->
+                <div class="inline-block flex-shrink-0 w-32 sm:w-36 bg-white rounded-lg shadow overflow-hidden cursor-pointer transition-transform transform hover:scale-105"
+                    onclick="openGameModal('데드셀', 'https://store.steampowered.com/app/588650', '003')">
+                    <div class="aspect-[4/3] w-full bg-gray-100 relative">
+                        <div
+                            class="absolute top-1 right-1 bg-black bg-opacity-60 text-white text-[10px] px-1.5 py-0.5 rounded-full z-10">
+                            ★ 4.7</div>
+                        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/588650/header.jpg" alt="데드셀"
+                            class="w-full h-full object-cover" />
+                    </div>
+                    <div class="px-2 py-1 space-y-0.5">
+                        <div class="text-[12px] font-semibold text-gray-800 truncate">데드셀</div>
+                        <div class="text-[10px] text-gray-500">발매일: 2018.08.07</div>
+                    </div>
+                </div>
+
+                <!-- ✅ 미니 게임 카드 4 -->
+                <div class="inline-block flex-shrink-0 w-32 sm:w-36 bg-white rounded-lg shadow overflow-hidden cursor-pointer transition-transform transform hover:scale-105"
+                    onclick="openGameModal('셀레스트', 'https://store.steampowered.com/app/504230', '004')">
+                    <div class="aspect-[4/3] w-full bg-gray-100 relative">
+                        <div
+                            class="absolute top-1 right-1 bg-black bg-opacity-60 text-white text-[10px] px-1.5 py-0.5 rounded-full z-10">
+                            ★ 4.8</div>
+                        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/504230/header.jpg" alt="셀레스트"
+                            class="w-full h-full object-cover" />
+                    </div>
+                    <div class="px-2 py-1 space-y-0.5">
+                        <div class="text-[12px] font-semibold text-gray-800 truncate">셀레스트</div>
+                        <div class="text-[10px] text-gray-500">발매일: 2018.01.25</div>
+                    </div>
+                </div>
+
+                <!-- ✅ 미니 게임 카드 5 -->
+                <div class="inline-block flex-shrink-0 w-32 sm:w-36 bg-white rounded-lg shadow overflow-hidden cursor-pointer transition-transform transform hover:scale-105"
+                    onclick="openGameModal('그림 도색 시뮬레이터', 'https://store.steampowered.com/app/1331440', '005')">
+                    <div class="aspect-[4/3] w-full bg-gray-100 relative">
+                        <div
+                            class="absolute top-1 right-1 bg-black bg-opacity-60 text-white text-[10px] px-1.5 py-0.5 rounded-full z-10">
+                            ★ 4.2</div>
+                        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1331440/header.jpg"
+                            alt="그림 도색 시뮬레이터" class="w-full h-full object-cover" />
+                    </div>
+                    <div class="px-2 py-1 space-y-0.5">
+                        <div class="text-[12px] font-semibold text-gray-800 truncate">그림 도색 시뮬레이터</div>
+                        <div class="text-[10px] text-gray-500">발매일: 2021.03.04</div>
+                    </div>
+                </div>
+
+                <!-- ✅ 미니 게임 카드 6 -->
+                <div class="inline-block flex-shrink-0 w-32 sm:w-36 bg-white rounded-lg shadow overflow-hidden cursor-pointer transition-transform transform hover:scale-105"
+                    onclick="openGameModal('리틀 나이트메어', 'https://store.steampowered.com/app/424840', '006')">
+                    <div class="aspect-[4/3] w-full bg-gray-100 relative">
+                        <div
+                            class="absolute top-1 right-1 bg-black bg-opacity-60 text-white text-[10px] px-1.5 py-0.5 rounded-full z-10">
+                            ★ 4.5</div>
+                        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/424840/header.jpg" alt="리틀 나이트메어"
+                            class="w-full h-full object-cover" />
+                    </div>
+                    <div class="px-2 py-1 space-y-0.5">
+                        <div class="text-[12px] font-semibold text-gray-800 truncate">리틀 나이트메어</div>
+                        <div class="text-[10px] text-gray-500">발매일: 2017.04.28</div>
+                    </div>
+                </div>
+
+                <!-- ✅ 미니 게임 카드 7 -->
+                <div class="inline-block flex-shrink-0 w-32 sm:w-36 bg-white rounded-lg shadow overflow-hidden cursor-pointer transition-transform transform hover:scale-105"
+                    onclick="openGameModal('던그리드', 'https://store.steampowered.com/app/1052690', '007')">
+                    <div class="aspect-[4/3] w-full bg-gray-100 relative">
+                        <div
+                            class="absolute top-1 right-1 bg-black bg-opacity-60 text-white text-[10px] px-1.5 py-0.5 rounded-full z-10">
+                            ★ 4.4</div>
+                        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1052690/header.jpg" alt="던그리드"
+                            class="w-full h-full object-cover" />
+                    </div>
+                    <div class="px-2 py-1 space-y-0.5">
+                        <div class="text-[12px] font-semibold text-gray-800 truncate">던그리드</div>
+                        <div class="text-[10px] text-gray-500">발매일: 2020.07.23</div>
+                    </div>
+                </div>
+
+                <!-- ✅ 미니 게임 카드 8 -->
+                <div class="inline-block flex-shrink-0 w-32 sm:w-36 bg-white rounded-lg shadow overflow-hidden cursor-pointer transition-transform transform hover:scale-105"
+                    onclick="openGameModal('언더테일', 'https://store.steampowered.com/app/391540', '008')">
+                    <div class="aspect-[4/3] w-full bg-gray-100 relative">
+                        <div
+                            class="absolute top-1 right-1 bg-black bg-opacity-60 text-white text-[10px] px-1.5 py-0.5 rounded-full z-10">
+                            ★ 4.9</div>
+                        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/391540/header.jpg" alt="언더테일"
+                            class="w-full h-full object-cover" />
+                    </div>
+                    <div class="px-2 py-1 space-y-0.5">
+                        <div class="text-[12px] font-semibold text-gray-800 truncate">언더테일</div>
+                        <div class="text-[10px] text-gray-500">발매일: 2015.09.15</div>
+                    </div>
+                </div>
+
+
+
+
+
+            </div>
+        </section>
+
+        <!-- ✅ [7] 유저 기반 커뮤니티 추천 -->
+        <section class="px-4">
+            <h2 class="text-lg font-semibold mb-2">인기 커뮤니티</h2>
+            <div class="grid grid-cols-4 gap-4 text-xs">
+
+                <!-- 커뮤니티 1 -->
+                <div class="flex flex-col items-center relative cursor-pointer">
+                    <div class="w-16 h-16 rounded-2xl overflow-hidden relative">
+                        <img src="https://cdn.akamai.steamstatic.com/steam/apps/413150/header.jpg"
+                            class="w-full h-full object-cover" />
+                        <span
+                            class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] px-1 rounded-full">N</span>
+                    </div>
+                    <div class="text-center mt-1 leading-tight">
+                        [스타듀밸리]<br>
+                        스타듀밸리 팬클럽
+                    </div>
+                </div>
+
+                <!-- 커뮤니티 2 -->
+                <div class="flex flex-col items-center relative cursor-pointer">
+                    <div class="w-16 h-16 rounded-2xl overflow-hidden relative">
+                        <img src="https://cdn.akamai.steamstatic.com/steam/apps/730/header.jpg"
+                            class="w-full h-full object-cover" />
+                    </div>
+                    <div class="text-center mt-1 leading-tight">
+                        [CS:GO]<br>
+                        CS:GO 전략 톡
+                    </div>
+                </div>
+
+                <!-- 커뮤니티 3 -->
+                <div class="flex flex-col items-center relative cursor-pointer">
+                    <div class="w-16 h-16 rounded-2xl overflow-hidden relative">
+                        <img src="https://cdn.akamai.steamstatic.com/steam/apps/1174180/header.jpg"
+                            class="w-full h-full object-cover" />
+                        <span
+                            class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] px-1 rounded-full">N</span>
+                    </div>
+                    <div class="text-center mt-1 leading-tight">
+                        [RDR2]<br>
+                        RDR2 세계관 토론
+                    </div>
+                </div>
+
+                <!-- 커뮤니티 4 -->
+                <div class="flex flex-col items-center relative cursor-pointer">
+                    <div class="w-16 h-16 rounded-2xl overflow-hidden relative">
+                        <img src="https://cdn.akamai.steamstatic.com/steam/apps/275850/header.jpg"
+                            class="w-full h-full object-cover" />
+                    </div>
+                    <div class="text-center mt-1 leading-tight">
+                        [노맨즈스카이]<br>
+                        노맨스 유저모임
+                    </div>
+                </div>
+
+                <!-- 커뮤니티 5 -->
+                <div class="flex flex-col items-center relative cursor-pointer">
+                    <div class="w-16 h-16 rounded-2xl overflow-hidden relative">
+                        <img src="https://cdn.akamai.steamstatic.com/steam/apps/1506830/header.jpg"
+                            class="w-full h-full object-cover" />
+                    </div>
+                    <div class="text-center mt-1 leading-tight">
+                        [밸런타이너즈]<br>
+                        밸런타타 RPG길드
+                    </div>
+                </div>
+
+                <!-- 커뮤니티 6 -->
+                <div class="flex flex-col items-center relative cursor-pointer">
+                    <div class="w-16 h-16 rounded-2xl overflow-hidden relative">
+                        <img src="https://cdn.akamai.steamstatic.com/steam/apps/1086940/header.jpg"
+                            class="w-full h-full object-cover" />
+                        <span
+                            class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] px-1 rounded-full">N</span>
+                    </div>
+                    <div class="text-center mt-1 leading-tight">
+                        [발더스게이트3]<br>
+                        발더게게 공략방
+                    </div>
+                </div>
+
+                <!-- 커뮤니티 7 -->
+                <div class="flex flex-col items-center relative cursor-pointer">
+                    <div class="w-16 h-16 rounded-2xl overflow-hidden relative">
+                        <img src="https://cdn.akamai.steamstatic.com/steam/apps/242760/header.jpg"
+                            class="w-full h-full object-cover" />
+                    </div>
+                    <div class="text-center mt-1 leading-tight">
+                        [더 포레스트]<br>
+                        더포레레 생존캠프
+                    </div>
+                </div>
+
+                <!-- 커뮤니티 8 -->
+                <div class="flex flex-col items-center relative cursor-pointer">
+                    <div class="w-16 h-16 rounded-2xl overflow-hidden relative">
+                        <img src="https://cdn.akamai.steamstatic.com/steam/apps/1245620/header.jpg"
+                            class="w-full h-full object-cover" />
+                    </div>
+                    <div class="text-center mt-1 leading-tight">
+                        [엘든 링]<br>
+                        던전&보스 공략방
+                    </div>
+                </div>
+
+
+
+
+            </div>
+        </section>
+    </main>
+
+    <!-- ✅ [8] 하단 고정 탭바 -->
+    <nav class="fixed bottom-0 w-full bg-white border-t flex justify-between items-center py-2 shadow-inner">
+
+        <button class="flex-1 flex flex-col items-center text-sm text-gray-600 hover:text-[#123458]">
+            <i class="bi bi-controller text-xl"></i>
+            게임
+        </button>
+        <button class="flex-1 flex flex-col items-center text-sm text-gray-600 hover:text-[#123458]">
+            <i class="bi bi-people text-xl"></i>
+            커뮤니티
+        </button>
+        <button class="flex-1 flex flex-col items-center text-sm text-[#030303]">
+            <i class="bi bi-house-door-fill text-xl"></i>
+            홈
+        </button>
+        <button class="flex-1 flex flex-col items-center text-sm text-gray-600 hover:text-[#123458]">
+            <i class="bi bi-calendar-event text-xl"></i>
+            캘린더
+        </button>
+        <button class="flex-1 flex flex-col items-center text-sm text-gray-600 hover:text-[#123458]">
+            <i class="bi bi-box-arrow-right text-xl"></i>
+            로그아웃
+        </button>
+    </nav>
+
+
+    <script>
+        function toggleMenu(show) {
+            document.getElementById('sideMenu').classList.toggle('hidden', !show);
+            document.getElementById('overlay').classList.toggle('hidden', !show);
+        }
+        function openGameModal(title, steamUrl, communityId) {
+            document.getElementById('gameModalTitle').textContent = title;
+            const actionsDiv = document.getElementById('gameModalActions');
+            actionsDiv.innerHTML = '';
+            actionsDiv.innerHTML += `<a href="${steamUrl}" target="_blank" class="block w-full bg-gray-100 rounded px-4 py-2 text-sm hover:bg-gray-200">🔗 스팀 페이지 보기</a>`;
+            actionsDiv.innerHTML += `<a href="/community/${communityId}" class="block w-full bg-[#123458] text-white rounded px-4 py-2 text-sm hover:opacity-90">👥 커뮤니티</a>`;
+          
+            document.getElementById('gameModal').classList.remove('hidden');
+        }
+        function closeGameModal() {
+            document.getElementById('gameModal').classList.add('hidden');
+        }
+        function openSearchPage() {
+            document.getElementById('searchPage').classList.remove('hidden');
+            document.getElementById('searchInput').focus();
+        }
+        function closeSearchPage() {
+            document.getElementById('searchPage').classList.add('hidden');
+            document.getElementById('searchInput').value = '';
+            document.getElementById('searchResults').innerHTML = '';
+        }
+        function searchGames(query) {
+            const results = [
+                { title: '엘든링 DLC', steamUrl: 'https://store.steampowered.com/app/1245620', communityId: '123', hasCommunity: true },
+                { title: '하데스', steamUrl: 'https://store.steampowered.com/app/1145360', communityId: '456', hasCommunity: true },
+                { title: '팔월의 블루', steamUrl: 'https://store.steampowered.com/app/999999', communityId: '999', hasCommunity: false },
+            ];
+            const filtered = results.filter(g => g.title.includes(query));
+            const container = document.getElementById('searchResults');
+            container.innerHTML = '';
+            filtered.forEach(game => {
+                const div = document.createElement('li');
+                div.className = 'bg-gray-100 rounded p-3 cursor-pointer hover:bg-gray-200';
+                div.innerHTML = `<div class='font-semibold'>🎮 ${game.title}</div><div class='text-sm text-gray-600'>${game.hasCommunity ? '커뮤니티 참여 가능' : '커뮤니티 없음'}</div>`;
+                div.onclick = () => {
+                    closeSearchPage();
+                    openGameModal(game.title, game.hasCommunity, game.steamUrl, game.communityId);
+                };
+                container.appendChild(div);
+            });
+        }
+        function slideLeft(id) {
+            document.getElementById(id).scrollBy({ left: -300, behavior: 'smooth' });
+        }
+        function slideRight(id) {
+            document.getElementById(id).scrollBy({ left: 300, behavior: 'smooth' });
+        }
+
+        // 햄버거 버튼 > 드롭다운 메뉴
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdownMenu');
+            dropdown.classList.toggle('hidden');
+        }
+
+        // 바깥 클릭 시 닫기
+        window.addEventListener('click', function (e) {
+            const menu = document.getElementById('dropdownMenu');
+            const button = document.querySelector('button[onclick="toggleDropdown()"]');
+            if (!menu.contains(e.target) && !button.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
+        });
+    </script>
+
+</body>
+
+</html>
