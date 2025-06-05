@@ -47,49 +47,49 @@ public class NoticeServiceImpl implements NoticeService {
     }
 
     public void addNotice(String type) {
-        String message = "type에 맞는 변경사항 명시";
-        List<String> outType = new ArrayList<>();
-
-        switch (type) {
-            case "p": message = "새로운 제품이 등록되었습니다.";
-                Collections.addAll(outType, "생산부서", "구매부서", "자재부서");
-                break;
-            case "m": message = "새로운 부품이 등록되었습니다.";
-                Collections.addAll(outType, "생산부서", "구매부서", "자재부서");
-                break;
-            case "pp": message = "새로운 생산 계획이 등록되었습니다.";
-                Collections.addAll(outType, "생산부서", "구매부서", "자재부서");
-                break;
-            case "ppm": message = "수정된 생산 계획이 있습니다.";
-                Collections.addAll(outType, "생산부서", "구매부서", "자재부서");
-                break;
-            case "b": message = "새로운 BOM이 등록되었습니다.";
-                Collections.addAll(outType, "생산부서", "구매부서", "자재부서");
-                break;
-            case "dpp": message = "새로운 조달 계획이 등록되었습니다.";
-                Collections.addAll(outType, "생산부서", "구매부서", "자재부서");
-                break;
-            case "ob": message = "새로운 구매 발주가 등록되었습니다.";
-                Collections.addAll(outType, "생산부서", "구매부서", "자재부서");
-                break;
-            case "ip": message = "새로운 입고 제품이 등록되었습니다.";
-                Collections.addAll(outType, "생산부서", "구매부서", "자재부서");
-                break;
-            case "i": message = "구상중.";
-                Collections.addAll(outType, "생산부서", "구매부서", "자재부서");
-                break;
-            default:
-        }
-
-        List<UserBy> userBys = userByRepository.findByType(outType);
-
-        for (UserBy userBy : userBys) {
-            Notice notice = new Notice();
-            notice.setUserBy(userBy);
-            notice.setMessage(message);
-            notice.setReadNotice(false);
-            noticeRepository.save(notice);
-        }
+//        String message = "type에 맞는 변경사항 명시";
+//        List<String> outType = new ArrayList<>();
+//
+//        switch (type) {
+//            case "p": message = "새로운 제품이 등록되었습니다.";
+//                Collections.addAll(outType, "생산부서", "구매부서", "자재부서");
+//                break;
+//            case "m": message = "새로운 부품이 등록되었습니다.";
+//                Collections.addAll(outType, "생산부서", "구매부서", "자재부서");
+//                break;
+//            case "pp": message = "새로운 생산 계획이 등록되었습니다.";
+//                Collections.addAll(outType, "생산부서", "구매부서", "자재부서");
+//                break;
+//            case "ppm": message = "수정된 생산 계획이 있습니다.";
+//                Collections.addAll(outType, "생산부서", "구매부서", "자재부서");
+//                break;
+//            case "b": message = "새로운 BOM이 등록되었습니다.";
+//                Collections.addAll(outType, "생산부서", "구매부서", "자재부서");
+//                break;
+//            case "dpp": message = "새로운 조달 계획이 등록되었습니다.";
+//                Collections.addAll(outType, "생산부서", "구매부서", "자재부서");
+//                break;
+//            case "ob": message = "새로운 구매 발주가 등록되었습니다.";
+//                Collections.addAll(outType, "생산부서", "구매부서", "자재부서");
+//                break;
+//            case "ip": message = "새로운 입고 제품이 등록되었습니다.";
+//                Collections.addAll(outType, "생산부서", "구매부서", "자재부서");
+//                break;
+//            case "i": message = "구상중.";
+//                Collections.addAll(outType, "생산부서", "구매부서", "자재부서");
+//                break;
+//            default:
+//        }
+//
+//        List<UserBy> userBys = userByRepository.findByType(outType);
+//
+//        for (UserBy userBy : userBys) {
+//            Notice notice = new Notice();
+//            notice.setUserBy(userBy);
+//            notice.setMessage(message);
+//            notice.setReadNotice(false);
+//            noticeRepository.save(notice);
+//        }
     }
 
     @Scheduled(cron = "0 0 3 * * *") // 매일 새벽 3시

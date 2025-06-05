@@ -14,18 +14,21 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class UserByDTO {
     private String uId;
-    private String uPassword;
+    private String uPw;
     private String uName;
-    private String uAddress;
     private String userType;
-    private String userJob;
-    private String userRank;
-    private String uEmail;
-    private String uPhone;
-    private LocalDate uBirthDay;
-    private String status;
-    private String role;
 
+    private String url;
+    private String url2;
+
+    private String role;
     private LocalDateTime regDate;
     private LocalDateTime modDate;
+
+    public void steam(String steamid, String personaname, String avatarfull, String profileurl, String role, LocalDateTime regDate, LocalDateTime modDate) {
+        this.uId = steamid;
+        this.uName = personaname;
+        this.url = avatarfull;
+        this.url2 = profileurl;
+    }
 }

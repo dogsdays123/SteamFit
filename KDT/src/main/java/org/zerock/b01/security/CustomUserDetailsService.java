@@ -35,15 +35,9 @@ public class CustomUserDetailsService implements UserDetailsService {
         UserBySecurityDTO userBySecurityDTO =
                 new UserBySecurityDTO(
                         userBy.getUId(),
-                        userBy.getUPassword(),
+                        userBy.getUPw(),
                         userBy.getUName(),
-                        userBy.getUAddress(),
                         userBy.getUserType(),
-                        userBy.getUserJob(),
-                        userBy.getUEmail(),
-                        userBy.getUPhone(),
-                        userBy.getUBirthDay(),
-                        userBy.getStatus(),
                         userBy.getRoleSet()
                                 .stream().map(memberRole ->
                                         new SimpleGrantedAuthority("ROLE_"+memberRole.name()))

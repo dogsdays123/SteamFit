@@ -17,34 +17,24 @@ import java.util.Map;
 public class UserBySecurityDTO extends User implements OAuth2User {
 
     private String uId;
-    private String uPassword;
+    private String uPw;
     private String uName;
-    private String uAddress;
     private String userType;
-    private String userJob;
-    private String uEmail;
-    private String uPhone;
-    private LocalDate uBirthDay;
-    private String status;
+
+    private String url;
+    private String url2;
 
     private Map<String, Object> props;
 
-    public UserBySecurityDTO(String uId, String uPassword, String uName, String uAddress,
-                             String userType, String userJob, String uEmail, String uPhone,
-                             LocalDate uBirthDay, String status, Collection<? extends GrantedAuthority> authorities) {
+    public UserBySecurityDTO(String uId, String uPw, String uName, String userType,
+                             Collection<? extends GrantedAuthority> authorities) {
 
-        super(uId, uPassword, authorities);
+        super(uId, uPw, authorities);
 
         this.uId = uId;
-        this.uPassword = uPassword;
+        this.uPw = uPw;
         this.uName = uName;
-        this.uAddress = uAddress;
         this.userType = userType;
-        this.userJob = userJob;
-        this.uEmail = uEmail;
-        this.uPhone = uPhone;
-        this.uBirthDay = uBirthDay;
-        this.status = status;
     }
 
     @Override
@@ -54,6 +44,6 @@ public class UserBySecurityDTO extends User implements OAuth2User {
 
     @Override
     public String getName() {
-        return this.uId;
+        return this.uId;  // 보통 식별 가능한 고유 ID를 반환
     }
 }

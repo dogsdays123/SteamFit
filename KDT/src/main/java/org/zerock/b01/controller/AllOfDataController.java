@@ -28,35 +28,6 @@ public class AllOfDataController {
 
     @ModelAttribute
     public void Profile(UserByDTO userByDTO, Model model, Authentication auth, HttpServletRequest request) {
-        if (auth == null || !(auth.getPrincipal() instanceof UserBySecurityDTO)) {
-            model.addAttribute("userBy", null);
-            return;
-        }
-
-        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) auth;
-
-        // token.getPrincipal()이 MemberSecurityDTO 타입이라면, 이를 MemberSecurityDTO로 캐스팅
-        UserBySecurityDTO principal = (UserBySecurityDTO) token.getPrincipal();
-        String username = principal.getUId(); // MemberSecurityDTO에서 사용자 이름 가져오기
-
-        // 일반 로그인 사용자 정보 가져오기
-        userByDTO = userByService.readOne(username);
-
-        log.info("##### 일반 로그인 사용자 정보: " + userByDTO);
-
-        if(userByDTO != null) {
-            List<Notice> notice = noticeService.getNotice(userByDTO.getUId());
-
-            if (notice.isEmpty()) {
-                model.addAttribute("notice", null);
-            } else {
-                model.addAttribute("notice", notice);
-            }
-
-            model.addAttribute("userBy", userByDTO);
-            String formattedPhone = formatPhoneNumber(userByDTO.getUPhone());
-            model.addAttribute("formattedPhone", formattedPhone);
-        }
     }
 
 
@@ -68,4 +39,6 @@ public class AllOfDataController {
         }
         return phoneNumber;  // 예외적인 경우 그대로 반환
     }
+
+
 }

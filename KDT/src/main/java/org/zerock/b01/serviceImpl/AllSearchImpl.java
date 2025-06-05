@@ -44,30 +44,9 @@ public class AllSearchImpl extends QuerydslRepositorySupport implements AllSearc
             booleanBuilder.and(userBy.uName.contains(uName));
         }
 
-        if (userJob != null && !userJob.isEmpty()) {
-            if(!userJob.equals("전체")){
-                booleanBuilder.and(userBy.userJob.contains(userJob));
-            }
-        }
-
         if (regDate != null) {
             booleanBuilder.and(userBy.regDate.goe(regDate.atStartOfDay()));
         }
-
-        BooleanExpression rankCondition = userBy.userRank.isNull()
-                .or(userBy.userRank.isEmpty());
-
-        BooleanExpression jobCondition = userBy.userJob.isNotNull()
-                .and(userBy.userType.ne("other"));
-
-        BooleanExpression statusCondition =
-                userBy.status.eq("대기중")
-                        .or(userBy.status.isNull());
-
-        // 전부 and로 묶기
-        booleanBuilder.and(rankCondition)
-                .and(jobCondition)
-                .and(statusCondition);
 
         query.where(booleanBuilder);
         query.offset(pageable.getOffset());
@@ -77,12 +56,9 @@ public class AllSearchImpl extends QuerydslRepositorySupport implements AllSearc
 
         List<UserByAllDTO> dtoList = resultList.stream()
                 .map(user -> UserByAllDTO.builder()
-                        .uName(user.getUName())
-                        .userJob(user.getUserJob())
-                        .userRank(user.getUserRank())
-                        .modDate(user.getModDate())
-                        .status(user.getStatus())
                         .uId(user.getUId())
+                        .uName(user.getUName())
+                        .modDate(user.getModDate())
                         .build())
                 .collect(Collectors.toList());
 
