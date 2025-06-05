@@ -5,31 +5,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>스팀핏</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-    <!--select검색을 위한-->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
-    <link href="/css/layout.css" rel="stylesheet">
-
-    <!-- js -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <title>SteamFit 홈</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/css/main.css" rel="stylesheet">
 </head>
 
-<body>
-<!-- main start  -->
-<main class="main-content">
+<body class="bg-[#f1f1f1] text-[#030303]">
 
+<!-- ✅ [1] 검색 화면 오버레이 -->
+<div id="searchPage" class="hidden fixed inset-0 bg-white z-[999] flex flex-col">
+    <div class="p-4 border-b flex items-center">
+        <input type="text" id="searchInput" placeholder="게임 검색..." class="w-full border px-4 py-2 rounded-md"
+               oninput="searchGames(this.value)" autofocus>
+        <button class="ml-2 text-gray-500" onclick="closeSearchPage()"><i class="bi bi-x-lg text-xl"></i></button>
+    </div>
+    <ul id="searchResults" class="p-4 space-y-3 overflow-y-auto flex-1"></ul>
+</div>
+
+<!-- ✅ [4] 상단 고정 헤더 -->
+<!-- ✅ 전체 헤더 -->
+<header class="w-full bg-white shadow-sm fixed top-0 z-50">
+    <!-- ✅ 상단: 로고 / 검색창 / 햄버거 -->
+    <div class="flex items-center justify-between p-4">
+        <!-- 로고 -->
+        <div class="flex-shrink-0 logo">
+            스팀핏
+        </div>
+
+        <!-- 검색창 -->
+        <div class="flex-grow px-3">
+            <div class="relative">
+                <input type="text" placeholder="전체 검색" onclick="openSearchPage()"
+                       class="w-full pl-4 pr-10 py-1.5 bg-gray-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#123458]">
+                <button class="pr-2 absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
+                        onclick="openSearchPage()" aria-readonly="true">
+                    <i class="bi bi-search text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 햄버거 메뉴 -->
+        <div class="relative">
+            <button onclick="toggleDropdown()" class="text-2xl text-gray-700">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <!-- ✅ 드롭다운 메뉴 -->
+            <div id="dropdownMenu"
+                 class="hidden absolute right-0 mt-2 w-52 bg-white border border-gray-200 rounded-md shadow-lg text-sm z-50">
+                <ul class="py-2">
+                    <li><a href="#" class="flex items-center px-4 py-2 hover:bg-gray-100"><i
+                            class="bi bi-person me-2"></i> 마이페이지</a></li>
+                    <li><a href="#" class="flex items-center px-4 py-2 hover:bg-gray-100"><i
+                            class="bi bi-bell me-2"></i> 알림 <span
+                            class="ml-auto text-[#123458] font-bold">(1)</span></a></li>
+                    <li><a href="#" class="flex items-center px-4 py-2 hover:bg-gray-100"><i
+                            class="bi bi-star me-2"></i> 즐겨찾기</a></li>
+                    <hr class="my-1">
+                    <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">공지사항</a></li>
+                    <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">자주 묻는 질문</a></li>
+                    <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">스팀핏 소개</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ 하단 카테고리 탭 메뉴 -->
+    <!-- <nav class="flex px-4 py-2 space-x-4 overflow-x-auto text-sm font-medium border-t border-gray-100">
+        <a href="#" class="text-[#123458] font-bold whitespace-nowrap">HOME</a>
+        <a href="#" class="text-gray-700 whitespace-nowrap">추천게임</a>
+        <a href="#" class="text-gray-700 whitespace-nowrap">인기장르</a>
+        <a href="#" class="text-gray-700 whitespace-nowrap">출시예정</a>
+        <a href="#" class="text-gray-700 whitespace-nowrap">커뮤니티</a>
+    </nav> -->
+</header>
+
+<!-- page start  -->
+<div>
     <!-- 페이지 관리 -->
-<!--    <div layout:fragment="mypage"></div>-->
+    <div layout:fragment="main"></div>
+</div>
 
-</main>
+<!-- ✅ [8] 하단 고정 탭바 -->
+<nav class="fixed bottom-0 w-full bg-white border-t flex justify-between items-center py-2 shadow-inner">
 
+    <button class="flex-1 flex flex-col items-center text-sm text-gray-600 hover:text-[#123458]">
+        <i class="bi bi-controller text-xl"></i>
+        게임
+    </button>
+    <button class="flex-1 flex flex-col items-center text-sm text-gray-600 hover:text-[#123458]">
+        <i class="bi bi-people text-xl"></i>
+        커뮤니티
+    </button>
+    <button class="flex-1 flex flex-col items-center text-sm text-[#030303]">
+        <i class="bi bi-house-door-fill text-xl"></i>
+        홈
+    </button>
+    <button class="flex-1 flex flex-col items-center text-sm text-gray-600 hover:text-[#123458]">
+        <i class="bi bi-calendar-event text-xl"></i>
+        캘린더
+    </button>
+    <button class="flex-1 flex flex-col items-center text-sm text-gray-600 hover:text-[#123458]">
+        <i class="bi bi-box-arrow-right text-xl"></i>
+        로그아웃
+    </button>
+</nav>
 </body>
 
 <!--특정 위치에서 script를 사용하려면 <script layout:fragment="script" th:inline="javascript"> 를 사용해야 함-->

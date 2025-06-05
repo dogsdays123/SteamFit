@@ -46,11 +46,11 @@ public class CustomSecurityConfig {
         //일반 로그인
         http.formLogin(httpSecurityFormLoginConfigurer -> {
             httpSecurityFormLoginConfigurer
-                    .loginPage("/firstView/login")
+                    .loginPage("/homePage/login")
                     .failureHandler(failureHandler)
                     .successHandler((request, response, authentication) -> {
                         SavedRequest savedRequest = (SavedRequest) request.getSession().getAttribute("SPRING_SECURITY_SAVED_REQUEST");
-                        String redirectUrl = (savedRequest != null) ? savedRequest.getRedirectUrl() : "/mainPage/main"; // 이전 URL이 있으면 그곳으로, 없으면 /main
+                        String redirectUrl = (savedRequest != null) ? savedRequest.getRedirectUrl() : "/homePage/main"; // 이전 URL이 있으면 그곳으로, 없으면 /main
                         response.sendRedirect(redirectUrl);
                     });
         });
@@ -78,7 +78,7 @@ public class CustomSecurityConfig {
         http.logout(httpSecurityLogoutConfigurer -> {
             httpSecurityLogoutConfigurer
                     .logoutUrl("/logout")
-                    .logoutSuccessUrl("/firstView/login") // 로그아웃 후 리다이렉트할 URL
+                    .logoutSuccessUrl("/homePage/login") // 로그아웃 후 리다이렉트할 URL
                     .invalidateHttpSession(true) // 세션 무효화
                     .deleteCookies("JSESSIONID"); // 쿠키 삭제
         });

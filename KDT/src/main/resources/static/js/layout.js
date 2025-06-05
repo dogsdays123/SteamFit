@@ -1,159 +1,56 @@
-function toggleSidebar() {
-    const sidebar = document.querySelector('.sidebar');
-    sidebar.classList.toggle('closed');
+function toggleMenu(show) {
+    document.getElementById('sideMenu').classList.toggle('hidden', !show);
+    document.getElementById('overlay').classList.toggle('hidden', !show);
 }
 
-// 사이드바 메뉴 클릭 관련 함수
-function toggleSubmenu(id) {
-    var allSubmenus = document.querySelectorAll('.submenu');
-    var allLinks = document.querySelectorAll('.nav-link');
+function openSearchPage() {
+    document.getElementById('searchPage').classList.remove('hidden');
+    document.getElementById('searchInput').focus();
+}
+function closeSearchPage() {
+    document.getElementById('searchPage').classList.add('hidden');
+    document.getElementById('searchInput').value = '';
+    document.getElementById('searchResults').innerHTML = '';
+}
 
-    allSubmenus.forEach(function (menu) {
-        if (menu.id !== id) {
-            menu.style.display = 'none';
-        }
+function searchGames(query) {
+    const results = [
+        { title: '엘든링 DLC', steamUrl: 'https://store.steampowered.com/app/1245620', communityId: '123', hasCommunity: true },
+        { title: '하데스', steamUrl: 'https://store.steampowered.com/app/1145360', communityId: '456', hasCommunity: true },
+        { title: '팔월의 블루', steamUrl: 'https://store.steampowered.com/app/999999', communityId: '999', hasCommunity: false },
+    ];
+    const filtered = results.filter(g => g.title.includes(query));
+    const container = document.getElementById('searchResults');
+    container.innerHTML = '';
+    filtered.forEach(game => {
+        const div = document.createElement('li');
+        div.className = 'bg-gray-100 rounded p-3 cursor-pointer hover:bg-gray-200';
+        div.innerHTML = `<div class='font-semibold'>🎮 ${game.title}</div><div class='text-sm text-gray-600'>${game.hasCommunity ? '커뮤니티 참여 가능' : '커뮤니티 없음'}</div>`;
+        div.onclick = () => {
+            closeSearchPage();
+            openGameModal(game.title, game.hasCommunity, game.steamUrl, game.communityId);
+        };
+        container.appendChild(div);
     });
-
-    allLinks.forEach(function (link) {
-        if (link.innerHTML.includes('▴')) {
-            link.innerHTML = link.innerHTML.replace('▴', '▾');
-        }
-    });
-
-    var submenu = document.getElementById(id);
-    var link = submenu.previousElementSibling;
-    var isOpen = submenu.style.display === 'block';
-
-    submenu.style.display = isOpen ? 'none' : 'block';
-    link.innerHTML = link.innerHTML.replace(isOpen ? '▴' : '▾', isOpen ? '▾' : '▴');
+}
+function slideLeft(id) {
+    document.getElementById(id).scrollBy({ left: -300, behavior: 'smooth' });
+}
+function slideRight(id) {
+    document.getElementById(id).scrollBy({ left: 300, behavior: 'smooth' });
 }
 
-function toggleUserDropdown() {
-    const dropdown = document.querySelector('.user-dropdown');
-    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+// 햄버거 버튼 > 드롭다운 메뉴
+function toggleDropdown() {
+    const dropdown = document.getElementById('dropdownMenu');
+    dropdown.classList.toggle('hidden');
 }
 
+// 바깥 클릭 시 닫기
 window.addEventListener('click', function (e) {
-    const dropdown = document.querySelector('.user-dropdown');
-    const icon = document.querySelector('.bi-person-circle');
-    if (!dropdown.contains(e.target) && !icon.contains(e.target)) {
-        dropdown.style.display = 'none';
+    const menu = document.getElementById('dropdownMenu');
+    const button = document.querySelector('button[onclick="toggleDropdown()"]');
+    if (!menu.contains(e.target) && !button.contains(e.target)) {
+        menu.classList.add('hidden');
     }
 });
-
-
-document.addEventListener('DOMContentLoaded', function () {
-    const bellIcon = document.getElementById('bellIcon');
-    const dot = document.querySelector('.noticeDot');
-    const buttons = document.querySelectorAll('.noticeClick');
-
-    const totalNotices = buttons.length;
-    let checkedCount = 0;
-
-    // 알림 클릭 이벤트
-    buttons.forEach(button => {
-        button.addEventListener('click', function (event) {
-            const nId = event.target.value;
-            const thisButton = event.target;
-            const headerAlert = document.getElementById('headerAlert');
-
-            fetch('/notice/read', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ nId })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        thisButton.remove();
-                        checkedCount++;
-
-                        // 모든 알림 확인 완료
-                        if (checkedCount === totalNotices) {
-                            if (dot) {
-                                dot.style.display = 'none';
-                            }
-
-                            // 알림 없다는 메시지 추가
-                            if (headerAlert) {
-                                headerAlert.innerHTML = "<a><span style='color: gray;'>알림이 없습니다</span></a>";
-                            }
-                        }
-                    }
-                })
-                .catch(error => console.error('알림 삭제 중 오류 발생:', error));
-        });
-    });
-
-    // 벨 아이콘 클릭 시 드롭다운 열기
-    if (bellIcon) {
-        bellIcon.addEventListener('click', function (event) {
-            event.stopPropagation();
-            const dropdown = document.getElementById('alertDropdown');
-            dropdown.style.display = (dropdown.style.display === 'none' || dropdown.style.display === '') ? 'block' : 'none';
-        });
-    }
-});
-
-
-// 외부 클릭 시 드롭다운 닫기
-document.addEventListener('click', function (event) {
-    const bellIcon = document.getElementById('bellIcon');
-    const dropdown = document.getElementById('alertDropdown');
-    // bellIcon 또는 dropdown 내부를 클릭한 것이 아니면 닫기
-    if (!bellIcon.contains(event.target) && !dropdown.contains(event.target)) {
-        dropdown.style.display = 'none';
-    }
-});
-
-$(document).ready(function () {
-    $('#clearNoticeBtn').on('click', function () {
-        $.ajax({
-            url: `/notice/clear`,
-            method: 'GET',
-            success: function () {
-                alert("모든 알림이 정상적으로 삭제되었습니다.")
-            },
-            error: function (error) {
-                console.error('알람삭제:', error);
-            }
-        });
-    });
-})
-
-//통합 환경-------------------------------------------------------------------------
-
-function confirmSubmit(message) {
-    // 알림 창을 띄우기
-    var confirmResult = confirm(message + " 하시겠습니까?");
-
-    // 사용자가 "확인"을 클릭하면 폼 제출, 아니면 제출하지 않음
-    if (confirmResult) {
-        return true; // 폼 제출
-    } else {
-        return false; // 폼 제출을 취소
-    }
-}
-
-//이 부분에서 모든 searchSelect 클래스는 검색찾기가 가능
-$(document).ready(function () {
-    $('.searchSelect').select2({
-        placeholder: "선택 또는 직접 입력",
-        tags: true, // ← 이게 핵심! 직접 입력 허용
-        allowClear: true,
-        createTag: function (params) {
-            const term = $.trim(params.term);
-            if (term === '') {
-                return null;
-            }
-            return {
-                id: term,
-                text: term,
-                newTag: true // 사용자 입력값 구분
-            };
-        }
-    });
-});
-//통합 환경 END --------------------------------------------------------------------

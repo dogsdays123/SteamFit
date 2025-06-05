@@ -1,0 +1,31 @@
+@font-face {
+    font-family: '770Balsa';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2505-1@1.0/770Balsa.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'S-CoreDream-3Light';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-3Light.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: 'S-CoreDream-3Light';
+}
+
+.logo {
+    font-family: '770Balsa';
+    font-size: 1.2rem;
+}
+
+.scroll-hidden::-webkit-scrollbar {
+    display: none;
+}
+
+.scroll-hidden {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
