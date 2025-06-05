@@ -84,13 +84,6 @@
     </div>
 </div>
 
-<script>
-    function toggleCategoryModal() {
-        document.getElementById("categoryModal").classList.toggle("hidden");
-    }
-</script>
-
-
 <!-- 커뮤니티 공지 -->
 <div class="bg-gray-100 p-3 text-sm text-gray-700 flex items-center justify-center gap-2 text-center
             whitespace-nowrap overflow-hidden">
@@ -168,13 +161,6 @@
     </div>
 </div>
 
-<script>
-    function toggleSearch() {
-        const box = document.getElementById('searchBox');
-        box.classList.toggle('opacity-0');
-        box.classList.toggle('invisible');
-        box.classList.toggle('translate-y-4');
-    }
-</script>
+    <script th:src="@{/js/community/list.js}"></script>
 </div>
 </html>
